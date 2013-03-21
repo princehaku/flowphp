@@ -93,7 +93,7 @@ function error_page($code) {
  *
  * @param type $source
  */
-function regxp_convert($source) {
+function _regxpConvert($source) {
     $source = str_replace("\\", "\\\\", $source);
     $source = str_replace("/", "\\/", $source);
     $source = str_replace("$", "\\$", $source);

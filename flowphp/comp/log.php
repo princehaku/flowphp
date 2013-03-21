@@ -35,7 +35,7 @@ class F_Comp_Log {
             for ($i = 0; $i < count($debugtrace); $i++) {
                 $j = $debugtrace[$i];
                 // sys内的不trace
-                if (strpos(dirname($j['file']), dirname(FLOW_PATH)) !== false) {
+                if (empty($j['file']) || strpos(dirname($j['file']), dirname(FLOW_PATH)) !== false) {
                     continue;
                 }
                 $this->msg[$this->recordNums++] = array(

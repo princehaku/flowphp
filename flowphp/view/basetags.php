@@ -1,13 +1,33 @@
 <?php
 
-/** 基本标签库
+/**
+ * 基本标签库
  *
  * @author princehaku
  *
  */
-class BaseTags {
+class F_View_BaseTags {
 
     private $listTags = array();
+
+    /**
+     * 把正则符进行转义
+     * 比如.转义为\.
+     *
+     * @param type $source
+     */
+    private function _regxpConvert($source) {
+        $source = str_replace("\\", "\\\\", $source);
+        $source = str_replace("/", "\\/", $source);
+        $source = str_replace("$", "\\$", $source);
+        $source = str_replace("[", "\\[", $source);
+        $source = str_replace("]", "\\]", $source);
+        $source = str_replace("(", "\\(", $source);
+        $source = str_replace(")", "\\)", $source);
+        $source = str_replace(".", "\\.", $source);
+        return $source;
+    }
+
 
     public function apply($source) {
         // %include标签替换
@@ -18,10 +38,6 @@ class BaseTags {
         $this->parseGlobalToken($source);
         // 替换全局{$}标签为单词
         $this->parseToken($source);
-        // 替换全局{_}标签为多语言词汇
-        $this->parseLang($source);
-        // 替换全局{#}标签为配置
-        $this->parseConfig($source);
         // 替换全局(%)标签为函数
         $this->parseFunction($source);
         // 替换if标签对
@@ -36,7 +52,8 @@ class BaseTags {
      * @param type $source
      * @return boolean
      */
-    private function parseGlobalToken(&$source) {
+    private
+    function parseGlobalToken(&$source) {
         $matches = array();
 
         preg_match_all("/\\{\\$\\_(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
@@ -49,7 +66,7 @@ class BaseTags {
             $tagname = $j[1];
             $keyname = "\$_" . $tagname;
             $val = "<?php echo " . $keyname . ";?>";
-            $j[1] = regxp_convert($j[1]);
+            $j[1] = $this->_regxpConvert($j[1]);
             $source = preg_replace("/\\{\\$\\_" . $j[1] . "\\}/", $val, $source);
         }
         return true;
@@ -62,7 +79,7 @@ class BaseTags {
     private function parseIf(&$source) {
         $matches = array();
 
-        preg_match_all("/\<if\s*?con=\"([^\>]*)\"\>/", $source, $matches, PREG_SET_ORDER);
+        preg_match_all("/\\<if\\s*?con=\"([^\\>]*)\"\\>/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
             return false;
@@ -78,7 +95,7 @@ class BaseTags {
             $condition_val = str_replace("<", " < ", $condition_val);
             $matches_token = array();
             // 对con控制内的$xxx标签进行资源符替换
-            preg_match_all("/\\$([\S]*)(\s|$)/", $condition_val, $matches_token, PREG_SET_ORDER);
+            preg_match_all("/\\$([\\S]*)(\\s|$)/", $condition_val, $matches_token, PREG_SET_ORDER);
 
             if ($matches_token != null) {
                 foreach ($matches_token as $i1 => $j1) {
@@ -88,41 +105,16 @@ class BaseTags {
                         continue;
                     }
                     $converted_token = $this->convertComma($tagname, true);
-                    $tagname = regxp_convert($tagname);
+                    $tagname = $this->_regxpConvert($tagname);
                     $condition_val = preg_replace("/\\$" . $tagname . "/", $converted_token, $condition_val, 1);
                 }
             }
 
             $val = "<?php if ($condition_val) { ?>";
-            $condition_tag = regxp_convert($condition_tag);
+            $condition_tag = $this->_regxpConvert($condition_tag);
             $source = preg_replace("/\<if\s*?con=[\'\"]" . $condition_tag . "[\'\"]\>/", $val, $source, 1);
             $source = preg_replace("/<else>/", "<?php } else { ?>", $source, 1);
             $source = preg_replace("/<\/if>/", "<?php } ?>", $source, 1);
-        }
-
-        return true;
-    }
-
-    /** 解析{#xxx}的内容 替换成config的内容
-     *
-     * @param mixed $source
-     */
-    private function parseConfig(&$source) {
-        $matches = array();
-        // 替换{#xxx} 为 config内容
-        preg_match_all("/\\{#(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
-
-        if ($matches == null) {
-            return false;
-        }
-        foreach ($matches as $i => $j) {
-            $keyname = $j[1];
-            if ($keyname == null) {
-                Flow::Log()->i("标签" . $keyname . "解析失败");
-                continue;
-            }
-            $val = "<?php echo C(\"" . $keyname . "\"); ?>";
-            $source = preg_replace("/\\{#" . $j[1] . "\\}/", $val, $source);
         }
 
         return true;
@@ -157,7 +149,7 @@ class BaseTags {
                 continue;
             }
             $val = file_get_contents($otplfilepath);
-            $j[1] = regxp_convert($j[1]);
+            $j[1] = $this->_regxpConvert($j[1]);
             $source = preg_replace("/\\{%include " . $j[1] . "\\}/", $val, $source);
         }
 
@@ -171,13 +163,14 @@ class BaseTags {
     private function parseFunction(&$source) {
         $matches = array();
 
-        preg_match_all("/\\{%([\s\S]*?)\\}/", $source, $matches, PREG_SET_ORDER);
+        preg_match_all("/\\{%([\\s\\S]*?)\\}/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
             return false;
         }
 
         foreach ($matches as $i => $j) {
+            $keyname = $j[1];
             if (empty($j[1])) {
                 Flow::Log()->w("标签" . $keyname . "解析失败");
                 continue;
@@ -189,7 +182,7 @@ class BaseTags {
             $param = implode(",", $func);
 
             $val = "<?php echo $keyname($param); ?>";
-            $j[1] = regxp_convert($j[1]);
+            $j[1] = $this->_regxpConvert($j[1]);
             $source = preg_replace("/\\{%" . $j[1] . "\\}/", $val, $source);
         }
 
@@ -203,7 +196,7 @@ class BaseTags {
         $converted_string = "";
 
         if ($pos === false || $pos <= 0) {
-            $converted_string = "\$_res['" . $source_string . "']";
+            $converted_string = "\$" . $source_string;
         } else {
             $strings = explode(".", $source_string);
             foreach ($strings as $i => $token) {
@@ -243,33 +236,8 @@ class BaseTags {
             $tagname = $j[1];
             $converted_token = $this->convertComma($tagname, true);
             $val = "<?php echo $converted_token; ?>";
-            $tagname = regxp_convert($tagname);
+            $tagname = $this->_regxpConvert($tagname);
             $source = preg_replace("/\\{\\$" . $tagname . "\\}/", $val, $source);
-        }
-
-        return true;
-    }
-
-    /** 解析{_xxx}标签为多语言词汇
-     *
-     * @param mixed $source
-     */
-    private function parseLang(&$source) {
-        $matches = array();
-
-        preg_match_all("/\\{\\_(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
-
-        if ($matches == null) {
-            return false;
-        }
-
-        foreach ($matches as $i => $j) {
-            $val = "echo _e(\$$j)";
-            $tagname = $j[1];
-            // Flowphp::Log()->i("实体".$tagname."解析成功");
-            $val = "<?php echo _e(\"" . $tagname . "\"); ?>";
-            $j[1] = regxp_convert($j[1]);
-            $source = preg_replace("/\\{\\_" . $j[1] . "\\}/", $val, $source);
         }
 
         return true;
@@ -303,7 +271,7 @@ class BaseTags {
         // 按照resource里面的东西替换标签;
         $converted_token = $this->convertComma($tagname);
 
-        $parm = regxp_convert($parm);
+        $parm = $this->_regxpConvert($parm);
         // 替换一层
         $source = preg_replace("/<list $parm>/", "<?php if(isset( $converted_token )) { foreach ( $converted_token as \$i$n=>\$$tagid){ ?>", $source, 1);
 

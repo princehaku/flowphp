@@ -18,10 +18,6 @@ class F_View_SViewEngine {
      */
     private $tplpath;
 
-    protected $taglibs = array(
-        "Base"
-    );
-
     /**
      * 登记资源到列表
      * @param string $key
@@ -63,60 +59,52 @@ class F_View_SViewEngine {
 
         $_res = $this->getRes();
 
-        $cachedir = C("CACHE_DIR");
+        if (!empty($_res)) {
+            extract($_res);
+        }
 
-        $tpldir = C("VIEW_DIR");
+        $cachedir = Flow::$cfg["CACHE_DIR"] . '/template/';
+
+        $tpldir = Flow::$cfg["VIEW_DIR"];
 
         //检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {
-            Flow::Log()->w("缓存文件夹不存在 自动创建");
+            Flow::Log()->info("缓存文件夹不存在 自动创建");
             if (!mkdir($cachedir)) {
-                Flow::Log()->w("缓存文件夹" . $cachedir . "创建失败");
+                throw new Exception("缓存文件夹" . $cachedir . "创建失败");
             }
         }
         //模板文件
-        $tplfile = $tpldir . $viewname;
+        $tplfile = $tpldir . $viewname . '.htpl';
 
         $this->tplpath = $tplfile;
 
         //搜索模板文件是否存在
         if (file_exists($tplfile)) {
-            Flow::Log()->i("模版文件载入完毕 " . $tplfile);
+            Flow::Log()->info("模版文件载入完毕 " . $tplfile);
         } else {
-            throw new FlowException("模版文件不存在  " . $tplfile);
-            return;
+            throw new Exception("模版文件不存在  " . $tplfile);
         }
         //缓存文件处理
         $cachefile = $cachedir . str_replace("/", "__", $viewname) . "__cache.php";
 
         //如果缓存文件不比templatefile新  而且缓存文件存在 而且没有开启debug 直接包含缓存
-        if (file_exists($cachefile) && (filemtime($cachefile) > filemtime($tplfile)) && !C("DEBUG")) {
+        if (file_exists($cachefile) && (filemtime($cachefile) > filemtime($tplfile))
+            && (!defined("DEV") || DEV != 1)
+        ) {
             include_once ($cachefile);
             return;
         }
-        Flow::Log()->i("缓存过期 重新编译");
+        Flow::Log()->info("缓存过期 重新编译");
         //读取模板文件
         $c = file_get_contents($tplfile);
         //读取tag
-        foreach ($this->taglibs as $tagi => $tagj) {
-            Flow::Log()->i("标签库载入完成");
-            $tagname = $tagj . "Tags";
-            import("core.view.tags.$tagname");
-            $tagfilter = new $tagname();
-            $c = $tagfilter->apply($c);
-        }
-        //转换成linux换行方式
-        if (C("FORCE_UNINX_BR")) {
-            $c = preg_replace("/\r\n/", "\n", $c);
-        }
-
-        if (!C("DEBUG")) {
-            $c = preg_replace("/<!--(.*?)-->/", "", $c);
-        }
+        $tagfilter = new F_View_BaseTags();
+        $c = $tagfilter->apply($c);
 
         //存储编译后的到文件
         if (file_put_contents($cachefile, $c)) {
-            Flow::Log()->i("缓存文件{$cachefile}创建完成");
+            Flow::Log()->info("缓存文件{$cachefile}创建完成");
             include_once ($cachefile);
         } else {
             throw new FlowException("缓存文件创建失败" . $viewname);

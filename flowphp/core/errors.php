@@ -29,6 +29,9 @@ class F_Core_Errors {
      * 负责分发错误到日志记录
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline) {
+        // disable error capturing to avoid recursive errors
+        restore_error_handler();
+        restore_exception_handler();
         switch ($errno) {
             case E_NOTICE :
             case E_USER_NOTICE :

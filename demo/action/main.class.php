@@ -9,6 +9,7 @@
 class MainAction extends F_Core_Action {
 
     public function index() {
-        var_dump(1);
+        $this->assign("s", "bbb");
+        $this->display();
     }
 }

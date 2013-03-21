@@ -10,7 +10,7 @@ return array(
     // 缓存目录
     "CACHE_DIR" =>  APP_PATH . "/appcache/",
     // 模板目录
-    "VIEW_DIR" => APP_PATH . "/templates/",
+    "VIEW_DIR" => APP_PATH . "/template/",
     // 强制注销REQUEST
     "UNSET_REQS" => 1,
     // URL 分发器

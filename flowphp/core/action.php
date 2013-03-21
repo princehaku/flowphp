@@ -9,14 +9,20 @@
 
 class F_Core_Action {
 
+    /**
+     * @var F_View_SViewEngine
+     */
+    private $_view;
+
     public function setViewEngine($viewengine) {
         $this->_view = $viewengine;
     }
 
-    //模板资源
-    private $_view;
-
-    public function display($viewname) {
+    public function display($viewname = null) {
+        if (empty($viewname)) {
+            $viewname = strtolower(get_called_class());
+            $viewname = str_replace("action", "", $viewname);
+        }
         //调用父类
         $this->_view->display($viewname);
     }
