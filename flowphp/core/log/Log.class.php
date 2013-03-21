@@ -1,13 +1,14 @@
 <?php
 
 /** 日志消息类
- * 
+ *
  * @author princehaku
  *
  */
 class message {
 
     protected $type;
+
     protected $message;
 
     public function __construct($type, $message) {
@@ -117,30 +118,31 @@ class Log {
     public function f($msg) {
         $this->e($msg);
         $this->print();
-        die;
     }
 
     /** 输出日志
      *
      */
-    public function print_html() {
+    public function getHtml() {
         $warp = "";
         if (count($this->msg) > 10) {
             $warp = "height:300px;overflow-y:scroll";
         }
-        echo "<div class='syslog' style='background-color:#eee;border:1px solid;padding:20px;'>运行日志:<br/><div style='border:1px dashed;$warp'><div>";
+        $c = "<div class='syslog' style='background-color:#eee;border:1px solid;padding:20px;'>运行日志:<br/><div style='border:1px dashed;$warp'><div>";
         foreach (($this->msg) as $i => $j) {
-            echo ($j->getColorMessage()) . "<br />";
+            $c .= ($j->getColorMessage()) . "<br />";
         }
-        echo "</div></div></div>";
+        $c .= "</div></div></div>";
+        return $c;
     }
 
     /** 输出日志(JSON格式)
      *
      */
-    public function print_json() {
-        echo json_encode($this->msg);
+    public function getJson() {
+        return json_encode($this->msg);
     }
+
     /** 将日志存入文件
      * @param $filename
      */
@@ -154,7 +156,7 @@ class Log {
 
     /** 得到xml
      */
-    public function getXML() {
+    public function getXml() {
         $content = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
         $content .= "<logs>";
         foreach (($this->msg) as $i => $j) {

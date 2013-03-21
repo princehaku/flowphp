@@ -28,7 +28,7 @@ class Email extends View {
         if ($result) {
             return true;
         } else {
-            L()->w($result);
+            Flowphp::Log()->w($result);
             return false;
         }
     }

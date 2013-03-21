@@ -50,7 +50,7 @@ function M($modelName) {
         if (!$t) {
             throw new FlowException("模型" . $modelName . "载入失败, 没有文件 " . APP_BASE . "/module/" . $modelName . ".class.php");
         } else {
-            L()->i("模型" . $modelName . "载入成功");
+            Flowphp::Log()->i("模型" . $modelName . "载入成功");
         }
         $m[$modelName] = new $modelName($modelName);
     }
@@ -110,20 +110,6 @@ function _e($phrase, $loc = "cn") {
 }
 
 /**
- * 得到日志类
- * 单例模式
- * @return $L
- */
-function L() {
-    global $L;
-    if ($L == null) {
-        //初始化日志类
-        $L = new Log();
-    }
-    return $L;
-}
-
-/**
  * 包含一个基类库
  * 优先包含系统路径
  * @param string $path 定义为 xx.xxx.xx  结尾需要是.class.php
@@ -137,14 +123,12 @@ function import($path) {
     $loadfile = CORE_BASE . $url . ".class.php";
 
     if (file_exists($loadfile)) {
-        L()->i("系统库" . $path . "载入成功");
     } else {
         $loadfile = APP_BASE . $url . ".class.php";
 
         if (file_exists($loadfile)) {
-            L()->i("用户库" . $path . "载入成功");
         } else {
-            L()->e("库文件 $path 不存在");
+            throw new Exception("库文件 $path 不存在");
             return false;
         }
     }

@@ -1,36 +1,5 @@
 <?php
 
-/** 包含js文件
- * 
- * @param string $name js文件名
- */
-function jsinclude($namearray) {
-    if (!is_array($namearray))
-        return "<script type='text/javascript' src='" . C('SITE_URL') . C("JS_DIR") . "$namearray.js'></script>\n";
-    else {
-        $res = "";
-        foreach ($namearray as $i => $j) {
-            $res.=jsinclude($j);
-        }
-        return $res;
-    }
-}
-
-/** 包含css文件
- * @param string $name css文件名
- */
-function cssinclude($namearray) {
-    if (!is_array($namearray))
-        return '<link rel="stylesheet" type="text/css" href="' . C('SITE_URL') . C("CSS_DIR") . $namearray . '.css"/>' . "\n";
-    else {
-        $res = "";
-        foreach ($namearray as $i => $j) {
-            $res.=cssinclude($j);
-        }
-        return $res;
-    }
-}
-
 /** 页面跳转 <meta> 方式的重定向
  * @param $url 跳转到的路径
  * @param time 间隔跳转的时间
@@ -105,7 +74,7 @@ function stripslashes_deep($value) {
 
 /** 打印自定义errorpage
  *
- * @param type $code 
+ * @param type $code
  */
 function error_page($code) {
     if (!headers_sent()) {
@@ -118,26 +87,28 @@ function error_page($code) {
     exit();
 }
 
-/** 把正则符进行转义
+/**
+ * 把正则符进行转义
  * 比如.转义为\.
  *
- * @param type $source 
+ * @param type $source
  */
 function regxp_convert($source) {
     $source = str_replace("\\", "\\\\", $source);
     $source = str_replace("/", "\\/", $source);
     $source = str_replace("$", "\\$", $source);
-    $source = str_replace("[", "\[", $source);
-    $source = str_replace("]", "\]", $source);
-    $source = str_replace("(", "\(", $source);
-    $source = str_replace(")", "\)", $source);
-    $source = str_replace(".", "\.", $source);
+    $source = str_replace("[", "\\[", $source);
+    $source = str_replace("]", "\\]", $source);
+    $source = str_replace("(", "\\(", $source);
+    $source = str_replace(")", "\\)", $source);
+    $source = str_replace(".", "\\.", $source);
     return $source;
 }
 
-/** 分拆url的参数为数组
+/**
+ * 分拆url的参数为数组
  *
- * @param type $url 
+ * @param type $url
  */
 function http_parse_query($url, $decode = false) {
     $parsed_link = parse_url($url);
@@ -147,9 +118,10 @@ function http_parse_query($url, $decode = false) {
     return parse_query($parsed_link["query"], $decode);
 }
 
-/** 分拆参数为数组
+/**
+ * 分拆参数为数组
  *
- * @param type $url 
+ * @param type $url
  */
 function parse_query($query, $decode = false) {
 
@@ -171,10 +143,11 @@ function parse_query($query, $decode = false) {
 
     return $params;
 }
-/**把一个对象转换成数组
+/**
+ * 把一个对象转换成数组
  *
  * @param type $array
- * @return type 
+ * @return type
  */
 function obj2arr($array) {
     if (is_object($array)) {

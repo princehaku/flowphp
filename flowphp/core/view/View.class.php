@@ -1,6 +1,7 @@
 <?php
 
-/** 模板框架
+/**
+ * 模板框架
  * 用于输出模版
  * @author princehaku
  * @site http://3haku.net
@@ -16,22 +17,18 @@ class View {
      *
      */
     private $tplpath;
-    
+
     protected $taglibs = array(
         "Base"
     );
 
-    /** 登记资源到列表
-     * 如果是一个类 会被强制转换成一个数组
+    /**
+     * 登记资源到列表
      * @param string $key
      * @param string|array|class $res
      */
 
     public function assign($key, $res) {
-
-        if (is_object($res)) {
-            $res = (array) $res;
-        }
         $this->resource[$key] = $res;
         return $res;
     }
@@ -45,8 +42,9 @@ class View {
     public function getHtml($viewname) {
         $oldcache = ob_get_contents();
         if (false === $oldcache) {
-            
+
         }
+        ob_clean();
         ob_start();
         $this->display($viewname);
         $content = ob_get_contents();
@@ -65,17 +63,15 @@ class View {
 
         $_res = $this->getRes();
 
-        //$viewname=str_replace(".html",".tpl",$viewname);
-
         $cachedir = C("CACHE_DIR");
 
         $tpldir = C("VIEW_DIR");
 
         //检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {
-            L()->w("缓存文件夹不存在 自动创建");
+            Flowphp::Log()->w("缓存文件夹不存在 自动创建");
             if (!mkdir($cachedir)) {
-                L()->w("缓存文件夹" . $cachedir . "创建失败");
+                Flowphp::Log()->w("缓存文件夹" . $cachedir . "创建失败");
             }
         }
         //模板文件
@@ -85,7 +81,7 @@ class View {
 
         //搜索模板文件是否存在
         if (file_exists($tplfile)) {
-            L()->i("模版文件载入完毕 " . $tplfile);
+            Flowphp::Log()->i("模版文件载入完毕 " . $tplfile);
         } else {
             throw new FlowException("模版文件不存在  " . $tplfile);
             return;
@@ -98,12 +94,12 @@ class View {
             include_once ($cachefile);
             return;
         }
-        L()->i("缓存过期 重新编译");
+        Flowphp::Log()->i("缓存过期 重新编译");
         //读取模板文件
         $c = file_get_contents($tplfile);
         //读取tag
         foreach ($this->taglibs as $tagi => $tagj) {
-            L()->i("标签库载入完成");
+            Flowphp::Log()->i("标签库载入完成");
             $tagname = $tagj . "Tags";
             import("core.view.tags.$tagname");
             $tagfilter = new $tagname();
@@ -117,10 +113,10 @@ class View {
         if (!C("DEBUG")) {
             $c = preg_replace("/<!--(.*?)-->/", "", $c);
         }
-        
+
         //存储编译后的到文件
         if (file_put_contents($cachefile, $c)) {
-            L()->i("缓存文件{$cachefile}创建完成");
+            Flowphp::Log()->i("缓存文件{$cachefile}创建完成");
             include_once ($cachefile);
         } else {
             throw new FlowException("缓存文件创建失败" . $viewname);

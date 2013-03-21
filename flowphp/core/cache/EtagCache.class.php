@@ -1,6 +1,7 @@
 <?php
 
-/** 缓存控制器
+/**
+ * 浏览器缓存控制器
  *
  * @author princehaku
  *

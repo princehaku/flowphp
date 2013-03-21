@@ -1,6 +1,7 @@
 <?php
 
-/** 带session自动的模型类
+/**
+ * 带session自动的模型类
  * 没有用装饰器实现 使用的时候继承这个类会自动装配session
  * @author princehaku
  * @site http://3haku.net
@@ -37,7 +38,7 @@ class SessionModule extends Module {
     }
 
     /** 转换成一个序列化数组 供SessionModule序列化使用
-     * 
+     *
      */
 
     private function serializeToArray() {
@@ -52,8 +53,9 @@ class SessionModule extends Module {
         return $res;
     }
 
-    /** 用新数据更新一次session
-     * 
+    /**
+     * 用新数据更新一次session
+     *
      */
 
     final protected function updateSession() {

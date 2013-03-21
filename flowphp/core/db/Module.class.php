@@ -1,6 +1,7 @@
 <?php
 
-/** 数据库模型
+/**
+ * 数据库模型
  * 提供orm的部分支持
  *
  * @author princehaku
@@ -84,11 +85,7 @@ class Module {
      */
 
     public function __get($key) {
-        if ($this->idx != -1) {
-            $res = $this->newdata[$this->idx][$key];
-        } else {
-            $res = $this->tmpdata[$key];
-        }
+        $res = $this->newdata[$this->idx][$key];
         return $res;
     }
 
@@ -142,6 +139,7 @@ class Module {
 
     /** 查询所有的字段
      * 用find函数实现的
+     *
      * @return $this
      */
 
@@ -166,14 +164,14 @@ class Module {
         try {
             $res = D()->sql("select $colsname from `" . $this->tableName . "`" . $where . $order . $limit);
         } catch (FlowException $ex) {
-            L()->e("Module `$this->tableName`: 查询数据失败  " . $ex->getMessage());
+            Flowphp::Log()->e("Module `$this->tableName`: 查询数据失败  " . $ex->getMessage());
             throw new FlowException("Module `$this->tableName`: 查询数据失败  " . $ex->getMessage());
         }
         $this->sourcedata = $res;
         $this->newdata = $res;
         $this->rows = count($res);
         if ($this->rows == 0) {
-            L()->w("Module `$this->tableName`: 没有记录返回");
+            Flowphp::Log()->w("Module `$this->tableName`: 没有记录返回");
             $this->reset();
         }
         //如果大于一行  idx等于0
@@ -182,7 +180,7 @@ class Module {
         }
         return $this;
     }
-    
+
     public function toArray() {
         return $this->newdata;
     }
@@ -204,7 +202,7 @@ class Module {
 
     public function getrow($idx) {
         if ($idx >= $this->rows) {
-            L()->e("Module `$this->tableName`: $idx行 不存在 ");
+            Flowphp::Log()->e("Module `$this->tableName`: $idx行 不存在 ");
             throw new FlowException("Module `$this->tableName`: $idx行 不存在 ");
             return $this;
         }
@@ -338,11 +336,11 @@ class Module {
                 D()->sql("update `$this->tableName`  set " . $this->buildUSet($this->newdata[$j]) . " where " . $this->buildRUDWhere($this->sourcedata[$j]) . $order . $limit);
                 $this->sourcedata[$j] = $this->newdata[$j];
             } catch (FlowException $ex) {
-                L()->e("Module `$this->tableName`: 更新数据失败  " . $ex->getMessage());
+                Flowphp::Log()->e("Module `$this->tableName`: 更新数据失败  " . $ex->getMessage());
                 throw new FlowException("Module `$this->tableName`: 更新数据失败  " . $ex->getMessage());
             }
         }
-        L()->i("Module `$this->tableName`: 更新数据" . count($this->effectedidx) . "行");
+        Flowphp::Log()->i("Module `$this->tableName`: 更新数据" . count($this->effectedidx) . "行");
         //更新旧数据
         $this->effectedidx = array();
         $this->tmpdata = array();
@@ -365,14 +363,14 @@ class Module {
             try {
                 D()->sql("delete from `$this->tableName` where " . $this->buildRUDWhere($this->sourcedata[$this->idx])) . $order . $limit;
             } catch (FlowException $ex) {
-                L()->e("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
+                Flowphp::Log()->e("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
                 throw new FlowException("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
             }
             $this->sourcedata[$this->idx] = null;
             $this->newdata[$this->idx] = null;
         }
 
-        L()->i("Module `$this->tableName`: 删除数据 位于$this->idx");
+        Flowphp::Log()->i("Module `$this->tableName`: 删除数据 位于$this->idx");
 
         $this->tmpdata = array();
 
@@ -381,6 +379,7 @@ class Module {
 
     /** 保存数据
      * 自动选择update或者insert
+     *
      * @return $this
      */
 
@@ -394,7 +393,7 @@ class Module {
     }
 
     /** 清空状态 新数据作为新行加入
-     * 
+     *
      * @return $this
      */
 
@@ -418,7 +417,7 @@ class Module {
         try {
             D()->sql("insert into `$this->tableName` " . $this->buildCI($this->tmpdata));
         } catch (FlowException $ex) {
-            L()->e("Module `$this->tableName`: 插入数据失败  " . $ex->getMessage());
+            Flowphp::Log()->e("Module `$this->tableName`: 插入数据失败  " . $ex->getMessage());
             throw new FlowException("Module `$this->tableName`: 插入数据失败  " . $ex->getMessage());
         }
 
@@ -465,7 +464,7 @@ class Module {
         try {
             D()->sql("delete from `$this->tableName` " . $where . $limit);
         } catch (FlowException $ex) {
-            L()->e("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
+            Flowphp::Log()->e("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
             throw new FlowException("Module `$this->tableName`: 删除数据失败  " . $ex->getMessage());
         }
         $this->resetData();
@@ -487,7 +486,7 @@ class Module {
     }
 
     /** 重置sql语句状态
-     * 
+     *
      */
 
     public function resetQuery() {
@@ -500,7 +499,7 @@ class Module {
     }
 
     /** 重置所有数据和sql状态
-     * 
+     *
      */
 
     public function reset() {

@@ -1,7 +1,7 @@
 <?php
 
 /** 基本标签库
- * 
+ *
  * @author princehaku
  *
  */
@@ -34,7 +34,7 @@ class BaseTags {
      * 比如{$_RQUEST['a']}
      *
      * @param type $source
-     * @return boolean 
+     * @return boolean
      */
     private function parseGlobalToken(&$source) {
         $matches = array();
@@ -48,7 +48,6 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $tagname = $j[1];
             $keyname = "\$_" . $tagname;
-            // L()->i("实体".$keyname."解析成功");
             $val = "<?php echo " . $keyname . ";?>";
             $j[1] = regxp_convert($j[1]);
             $source = preg_replace("/\\{\\$\\_" . $j[1] . "\\}/", $val, $source);
@@ -119,7 +118,7 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $keyname = $j[1];
             if ($keyname == null) {
-                L()->i("标签" . $keyname . "解析失败");
+                Flowphp::Log()->i("标签" . $keyname . "解析失败");
                 continue;
             }
             $val = "<?php echo C(\"" . $keyname . "\"); ?>";
@@ -129,7 +128,7 @@ class BaseTags {
         return true;
     }
 
-    /** 解析{%include *}的内容 
+    /** 解析{%include *}的内容
      * 载入其他模板
      *
      * @param mixed $source
@@ -145,15 +144,15 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $keyname = $j[1];
             if ($keyname == null) {
-                L()->w("#include标签" . $keyname . "解析失败");
+                Flowphp::Log()->w("#include标签" . $keyname . "解析失败");
                 continue;
             }
             $otplfilepath = C("VIEW_DIR") . $keyname;
 
             if (file_exists($otplfilepath)) {
-                L()->i("Include模版文件载入完毕 " . C("VIEW_DIR") . $keyname);
+                Flowphp::Log()->i("Include模版文件载入完毕 " . C("VIEW_DIR") . $keyname);
             } else {
-                L()->e("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
+                Flowphp::Log()->e("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
                 throw new FlowException("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
                 continue;
             }
@@ -180,7 +179,7 @@ class BaseTags {
 
         foreach ($matches as $i => $j) {
             if (empty($j[1])) {
-                L()->w("标签" . $keyname . "解析失败");
+                Flowphp::Log()->w("标签" . $keyname . "解析失败");
                 continue;
             }
             $func = explode(" ", $j[1]);
@@ -267,7 +266,7 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $val = "echo _e(\$$j)";
             $tagname = $j[1];
-            // L()->i("实体".$tagname."解析成功");
+            // Flowphp::Log()->i("实体".$tagname."解析成功");
             $val = "<?php echo _e(\"" . $tagname . "\"); ?>";
             $j[1] = regxp_convert($j[1]);
             $source = preg_replace("/\\{\\_" . $j[1] . "\\}/", $val, $source);

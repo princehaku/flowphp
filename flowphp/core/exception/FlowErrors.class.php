@@ -6,7 +6,7 @@
 class FlowErrors {
 
     /** 致命错误处理
-     * 
+     *
      */
     static function fatalHandler() {
         if (null != ($error = error_get_last())) {
@@ -16,9 +16,9 @@ class FlowErrors {
                 case E_DEPRECATED:
                 case E_CORE_ERROR :
                 case E_COMPILE_ERROR :
-                    L()->e($error['message'] . " in " . $error['file'] . " line " . $error['line']);
+                    Flowphp::Log()->e($error['message'] . " in " . $error['file'] . " line " . $error['line']);
                     if(C("DEBUG")) {
-                        L()->print_html();
+                        Flowphp::Log()->print_html();
                     }
             }
         }
@@ -59,12 +59,12 @@ class FlowErrors {
         }
         //
         if ($errors == "Fatal Error") {
-            L()->e(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
+            Flowphp::Log()->e(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         }
         if ($errors == "Warning") {
-            L()->w(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
+            Flowphp::Log()->w(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         } else {
-            L()->i(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
+            Flowphp::Log()->i(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         }
 
         return false;
