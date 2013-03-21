@@ -118,7 +118,7 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $keyname = $j[1];
             if ($keyname == null) {
-                Flowphp::Log()->i("标签" . $keyname . "解析失败");
+                Flow::Log()->i("标签" . $keyname . "解析失败");
                 continue;
             }
             $val = "<?php echo C(\"" . $keyname . "\"); ?>";
@@ -144,15 +144,15 @@ class BaseTags {
         foreach ($matches as $i => $j) {
             $keyname = $j[1];
             if ($keyname == null) {
-                Flowphp::Log()->w("#include标签" . $keyname . "解析失败");
+                Flow::Log()->w("#include标签" . $keyname . "解析失败");
                 continue;
             }
             $otplfilepath = C("VIEW_DIR") . $keyname;
 
             if (file_exists($otplfilepath)) {
-                Flowphp::Log()->i("Include模版文件载入完毕 " . C("VIEW_DIR") . $keyname);
+                Flow::Log()->i("Include模版文件载入完毕 " . C("VIEW_DIR") . $keyname);
             } else {
-                Flowphp::Log()->e("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
+                Flow::Log()->e("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
                 throw new FlowException("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
                 continue;
             }
@@ -179,7 +179,7 @@ class BaseTags {
 
         foreach ($matches as $i => $j) {
             if (empty($j[1])) {
-                Flowphp::Log()->w("标签" . $keyname . "解析失败");
+                Flow::Log()->w("标签" . $keyname . "解析失败");
                 continue;
             }
             $func = explode(" ", $j[1]);

@@ -50,7 +50,7 @@ function M($modelName) {
         if (!$t) {
             throw new FlowException("模型" . $modelName . "载入失败, 没有文件 " . APP_BASE . "/module/" . $modelName . ".class.php");
         } else {
-            Flowphp::Log()->i("模型" . $modelName . "载入成功");
+            Flow::Log()->i("模型" . $modelName . "载入成功");
         }
         $m[$modelName] = new $modelName($modelName);
     }

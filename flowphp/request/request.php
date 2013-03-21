@@ -7,10 +7,9 @@
  * @author princehaku
  * @site http://3haku.net
  */
-class Request {
+class F_Request_Request {
 
     private $request;
-    private $hasquoted;
 
     function __construct() {
 
@@ -18,43 +17,15 @@ class Request {
 
         $this->request = array_merge($_POST, $this->request);
 
-        if (ini_get('register_globals') == 1) {
-            $this->hasquoted = 1;
-        } else {
-            $this->hasquoted = 0;
-        }
-        if (C("FORCE_REQUEST")) {
+        if (Flow::$cfg['UNSET_REQS']) {
             unset($_GET);
             unset($_POST);
             unset($_REQUEST);
         }
     }
 
-    /** 转义预定义字符
-     * 移除html标记
-     */
-    public function getString($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
-            return $nullvalue;
-        }
-        $s = $this->request[$param];
-        if (!$this->hasquoted) {
-            $s = htmlspecialchars_deep($s);
-        }
-        return $s;
-    }
-
-    /** 原始输入
-     */
-    public function getRawString($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
-            return $nullvalue;
-        }
-        $s = $this->request[$param];
-        return $s;
-    }
-
-    /** 转义所有  移除html代码
+    /**
+     * 转义所有  移除html代码
      * 转义html字符
      *
      * @see strip
@@ -64,11 +35,11 @@ class Request {
             return $nullvalue;
         }
         $s = $this->request[$param];
-        $s = addslashes_deep($s);
         return $s;
     }
 
-    /** 得到安全的html值
+    /**
+     * 得到安全的html
      *
      */
     public function getSafeHtml($param, $nullvalue = null) {
@@ -79,20 +50,18 @@ class Request {
         $s = preg_replace(array(
             '/<(\/?)(script|i?frame|style|html|body|title|link|meta|\?|\%)([^>]*?)>/isU', "/(<[^>]*)on[a-zA-Z] \s*=([^>]*>)/isU"
         ), "", $s);
-        if (!$this->hasquoted)
-            $s = addslashes_deep($s);
         return $s;
     }
 
-    /** 得到整型
-     *
+    /**
+     * 得到整型
      *
      */
     public function getInt($param, $nullvalue = null) {
         if (!isset($this->request[$param])) {
             return $nullvalue;
         }
-        return (int)$this->request[$param];
+        return intval($this->request[$param]);
     }
 
     /** 得到浮点型

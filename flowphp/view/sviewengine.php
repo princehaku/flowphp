@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 模板框架
+ * 模板框架视图解析
  * 用于输出模版
  * @author princehaku
  * @site http://3haku.net
  */
 
-class View {
+class F_View_SViewEngine {
     /** 资源列表
      *
      */
@@ -69,9 +69,9 @@ class View {
 
         //检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {
-            Flowphp::Log()->w("缓存文件夹不存在 自动创建");
+            Flow::Log()->w("缓存文件夹不存在 自动创建");
             if (!mkdir($cachedir)) {
-                Flowphp::Log()->w("缓存文件夹" . $cachedir . "创建失败");
+                Flow::Log()->w("缓存文件夹" . $cachedir . "创建失败");
             }
         }
         //模板文件
@@ -81,7 +81,7 @@ class View {
 
         //搜索模板文件是否存在
         if (file_exists($tplfile)) {
-            Flowphp::Log()->i("模版文件载入完毕 " . $tplfile);
+            Flow::Log()->i("模版文件载入完毕 " . $tplfile);
         } else {
             throw new FlowException("模版文件不存在  " . $tplfile);
             return;
@@ -94,12 +94,12 @@ class View {
             include_once ($cachefile);
             return;
         }
-        Flowphp::Log()->i("缓存过期 重新编译");
+        Flow::Log()->i("缓存过期 重新编译");
         //读取模板文件
         $c = file_get_contents($tplfile);
         //读取tag
         foreach ($this->taglibs as $tagi => $tagj) {
-            Flowphp::Log()->i("标签库载入完成");
+            Flow::Log()->i("标签库载入完成");
             $tagname = $tagj . "Tags";
             import("core.view.tags.$tagname");
             $tagfilter = new $tagname();
@@ -116,7 +116,7 @@ class View {
 
         //存储编译后的到文件
         if (file_put_contents($cachefile, $c)) {
-            Flowphp::Log()->i("缓存文件{$cachefile}创建完成");
+            Flow::Log()->i("缓存文件{$cachefile}创建完成");
             include_once ($cachefile);
         } else {
             throw new FlowException("缓存文件创建失败" . $viewname);

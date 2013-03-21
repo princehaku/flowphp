@@ -65,7 +65,7 @@ class DB {
         $this->dbpwd = $config["DB_PASSWORD"] == null ? C("DB_PASSWORD") : $config["DB_PASSWORD"];
         $this->dbcharset = $config["DB_CHARSET"] == null ? C("DB_CHARSET") : $config["DB_CHARSET"];
         if ($this->dbcharset == "") {
-            Flowphp::Log()->w("使用默认utf-8编码连接数据库");
+            Flow::Log()->w("使用默认utf-8编码连接数据库");
             $this->dbcharset = "utf8";
         }
         $this->connect();
@@ -105,7 +105,7 @@ class DB {
             }
             mysql_query("set names " . $this->dbcharset, $this->_identifyId);
 
-            Flowphp::Log()->i("DB " . $this->dbname . " Connected");
+            Flow::Log()->i("DB " . $this->dbname . " Connected");
         }
     }
 
@@ -198,10 +198,10 @@ class DB {
         $querytime_after = array_sum(explode(' ', microtime()));
 
         if (!$this->sqlResultSet) {
-            Flowphp::Log()->e("sql执行失败 ：$sql  :" . mysql_error($this->_identifyId));
+            Flow::Log()->e("sql执行失败 ：$sql  :" . mysql_error($this->_identifyId));
             throw new FlowException("sql_error" . " ：$sql  :" . mysql_error($this->_identifyId));
         } else {
-            Flowphp::Log()->i("执行语句  :  $sql 执行时间 :" . ($querytime_after - $querytime_before));
+            Flow::Log()->i("执行语句  :  $sql 执行时间 :" . ($querytime_after - $querytime_before));
         }
 
         return $this->sqlResultSet;

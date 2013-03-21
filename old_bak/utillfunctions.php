@@ -81,7 +81,7 @@ function error_page($code) {
         header("HTTP/1.1 $code NOT FOUND");
     }
     if (C("PAGE_$code")) {
-        $v = new View();
+        $v = new F_View_SViewEngine();
         $v->display(C("PAGE_$code"));
     }
     exit();

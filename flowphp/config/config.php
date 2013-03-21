@@ -1,19 +1,19 @@
 <?php
 
-/** 系统配置信息
+/**
+ * 系统基础配置信息
  *
  * @author princehaku
  * @site http://3haku.net
  */
-$sysconfig = array(
+return array(
     // 缓存目录
-    "CACHE_DIR" =>  APP_BASE . "/appcache/",
+    "CACHE_DIR" =>  APP_PATH . "/appcache/",
     // 模板目录
-    "VIEW_DIR" => APP_BASE . "/templates/",
+    "VIEW_DIR" => APP_PATH . "/templates/",
     // 强制注销REQUEST
-    "FORCE_REQUEST" => 1,
-    // 强制使用linux的换行符
-    "FORCE_UNINX_BR" => 1,
+    "UNSET_REQS" => 1,
     // URL 分发器
     "URL_DISPACHER" => "sys",
+    "TRACE_ERROR" => 1
 );

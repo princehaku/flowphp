@@ -1,6 +1,8 @@
 <?php
 
-/** 用curl做的联网类
+/**
+ * 用curl做的联网类
+ * 支持cookie
  */
 
 class HttpFetch {
@@ -23,7 +25,8 @@ class HttpFetch {
         return $this->sourceStack;
     }
 
-    /** get方式下载网页内容
+    /**
+     * get方式下载网页内容
      * @param $url
      * @return web conntent
      */
@@ -63,7 +66,8 @@ class HttpFetch {
         return $data;
     }
 
-    /** POST方式下载网页内容
+    /**
+     * POST方式下载网页内容
      * @param $url
      * @param $params post的信息串
      * @return web conntent

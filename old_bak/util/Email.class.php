@@ -6,7 +6,7 @@
 //载入模版引擎
 import("core.view.View");
 
-class Email extends View {
+class Email extends F_View_SViewEngine {
 
     public function send($from, $to, $subject, $content) {
 
@@ -28,7 +28,7 @@ class Email extends View {
         if ($result) {
             return true;
         } else {
-            Flowphp::Log()->w($result);
+            Flow::Log()->w($result);
             return false;
         }
     }
