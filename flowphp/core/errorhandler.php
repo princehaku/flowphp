@@ -27,6 +27,7 @@ class F_Core_ErrorHandler {
 
     public static function exceptionHandler($exception) {
         Flow::Log()->error($exception->getMessage());
+        Flow::Log()->traceLog($exception->getTrace());
         self::dieErrorLogs();
     }
     /**

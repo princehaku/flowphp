@@ -33,7 +33,8 @@ class Flow {
     /**
      * APP组件
      * 单例模式
-     * @return F_Comp_Log
+     *
+     * @return F_Comp_App
      */
     public static function App() {
         if (Flow::$_app == null) {
@@ -100,6 +101,10 @@ class Flow {
                 }
             }
         }
+        $components = self::$cfg['components'];
+        foreach($components as $name=>$config) {
+            self::App()->setComponent($name , $config);
+        }
     }
     /**
      * 执行
@@ -109,8 +114,8 @@ class Flow {
         $this->init();
 
         //加载url分析类 分析url
-        if (self::$cfg['URL_DISPACHER'] != "sys") {
-            $dispatcher = new self::$cfg['URL_DISPACHER'];
+        if (self::$cfg['url_dispacher'] != "sys") {
+            $dispatcher = new self::$cfg['url_dispacher'];
         } else {
             $dispatcher = new F_Request_Route();
         }
@@ -136,17 +141,12 @@ class Flow {
         if (!method_exists($action, $method_name)) {
             throw new Exception("控制类" . $action_name . "没有" . $method_name . "方法");
         }
-        $template_engine = self::$cfg['TPL_ENGINE'];
-        $action->setViewEngine(new $template_engine());
-        try {
-            // 初始化请求类
-            $request = new F_Request_Request();
-            // 执行方法
-            $action->$method_name($request);
-        } catch (Exception $e) {
-            Flow::Log()->error($e->getMessage());
-            throw $e;
-        }
+        // 初始化action的一些组件
+        $action->setViewEngine(new F_View_SViewEngine());
+        $request = new F_Request_Request();
+        $action->request = $request;
+        // 执行方法
+        $action->$method_name();
     }
 
 }

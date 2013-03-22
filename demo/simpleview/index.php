@@ -7,7 +7,7 @@
  *  Author     : zhongwei.bzw
  */
 
-define("DEV_MODE", 1);
+define("DEV_MODE", true);
 define("APP_PATH" , dirname(__FILE__));
 define("FLOW_PATH", dirname(dirname(dirname(__FILE__))) . "/flowphp/");
 

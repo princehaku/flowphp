@@ -12,6 +12,10 @@
  */
 
 class F_Core_Action {
+    /**
+     * @var F_Request_Request
+     */
+    public $request;
 
     /**
      * @var F_View_SViewEngine

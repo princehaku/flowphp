@@ -60,9 +60,9 @@ class F_View_SViewEngine {
             extract($view_data);
         }
 
-        $cachedir = Flow::$cfg["CACHE_DIR"] . '/template/';
+        $cachedir = Flow::$cfg["appcache_dir"] . '/template/';
 
-        $tpldir = Flow::$cfg["VIEW_DIR"];
+        $tpldir = APP_PATH . "/template/";
 
         // 检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {

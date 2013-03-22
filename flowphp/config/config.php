@@ -12,15 +12,16 @@
  */
 return array(
     // 缓存目录
-    "CACHE_DIR" => APP_PATH . "/appcache/",
-    // 模板目录
-    "VIEW_DIR" => APP_PATH . "/template/",
+    "appcache_dir" => APP_PATH . "/appcache/",
     // 强制注销REQUEST
-    "UNSET_REQS" => 1,
+    "unset_reqs" => 1,
     // URL 分发器
-    "URL_DISPACHER" => "sys",
+    "url_dispacher" => "sys",
 
-    "TRACE_ERROR" => 1,
+    "trace_error" => 1,
 
-    "TPL_ENGINE" => "F_View_SViewEngine"
+    "components" => array(
+
+
+    )
 );

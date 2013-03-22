@@ -34,13 +34,21 @@ class F_Comp_Log {
      *
      * @return $this
      */
-    public function traceLog() {
-        if (Flow::$cfg["TRACE_ERROR"]) {
-            $debugtrace = debug_backtrace();
+    public function traceLog($debugtrace = null) {
+        if (Flow::$cfg["trace_error"]) {
+            if (empty($debugtrace)) {
+                $debugtrace = debug_backtrace();
+            }
             for ($i = 0; $i < count($debugtrace); $i++) {
                 $j = $debugtrace[$i];
-                // TODO sys内的不trace
-                if (empty($j['file']) || strpos($j['file'], FLOW_PATH) !== false) {
+                if (empty($j['file'])) {
+                    continue;
+                }
+                $flow_path = dirname(FLOW_PATH) . "/" . basename(FLOW_PATH);
+                // sys内的不trace
+                if (strpos(str_replace("\\", "/", $j['file']),
+                    str_replace("\\", "/", $flow_path)) !== false
+                ) {
                     continue;
                 }
                 $this->msg[$this->recordNums++] = array(

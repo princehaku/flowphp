@@ -17,7 +17,7 @@ class F_Request_Request {
 
         $this->params = array_merge($_POST, $this->params);
 
-        if (Flow::$cfg['UNSET_REQS']) {
+        if (Flow::$cfg['unset_reqs']) {
             unset($_GET);
             unset($_POST);
             unset($_REQUEST);

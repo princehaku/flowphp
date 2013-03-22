@@ -7,7 +7,7 @@
  */
 
 
-class F_Core_Trace {
+class F_Comp_Trace {
 
     public $enable = true;
 
