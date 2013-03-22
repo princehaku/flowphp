@@ -9,7 +9,7 @@
 
 define("DEV_MODE", 1);
 define("APP_PATH" , dirname(__FILE__));
-define("FLOW_PATH", dirname(dirname(__FILE__)) . "/flowphp/");
+define("FLOW_PATH", dirname(dirname(dirname(__FILE__))) . "/flowphp/");
 
 include FLOW_PATH . "flow.php";
 
