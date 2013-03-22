@@ -11,12 +11,7 @@ class F_View_SViewEngine {
     /** 资源列表
      *
      */
-    private $resource;
-
-    /** 模板路径
-     *
-     */
-    private $tplpath;
+    private $_resource;
 
     /**
      * 登记资源到列表
@@ -25,7 +20,7 @@ class F_View_SViewEngine {
      */
 
     public function assign($key, $res) {
-        $this->resource[$key] = $res;
+        $this->_resource[$key] = $res;
         return $res;
     }
 
@@ -53,66 +48,63 @@ class F_View_SViewEngine {
      * @param $viewname
      */
 
-    public function display($viewname) {
+    public function display($viewname, $view_data) {
 
-        global $_res;
-
-        $_res = $this->getRes();
+        $_res = $this->_resource;
 
         if (!empty($_res)) {
             extract($_res);
+        }
+
+        if (!empty($view_data)) {
+            extract($view_data);
         }
 
         $cachedir = Flow::$cfg["CACHE_DIR"] . '/template/';
 
         $tpldir = Flow::$cfg["VIEW_DIR"];
 
-        //检测缓存文件夹是否存在
+        // 检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {
             Flow::Log()->info("缓存文件夹不存在 自动创建");
             if (!mkdir($cachedir, 0777, 1)) {
                 throw new Exception("缓存文件夹" . $cachedir . "创建失败");
             }
         }
-        //模板文件
+        // 模板文件
         $tplfile = $tpldir . $viewname . '.htpl';
 
-        $this->tplpath = $tplfile;
+        $tpl_path = $tplfile;
+        // 缓存文件处理
+        $tpl_cachepath = $cachedir . str_replace("/", "__", $viewname) . "__cache.php";
 
-        //搜索模板文件是否存在
-        if (file_exists($tplfile)) {
-            Flow::Log()->info("模版文件载入完毕 " . $tplfile);
-        } else {
+
+        // 搜索模板文件是否存在
+        if (DEV_MODE && !file_exists($tplfile)) {
             throw new Exception("模版文件不存在  " . $tplfile);
         }
-        //缓存文件处理
-        $cachefile = $cachedir . str_replace("/", "__", $viewname) . "__cache.php";
-
-        //如果缓存文件不比templatefile新  而且缓存文件存在 而且没有开启debug 直接包含缓存
-        if (file_exists($cachefile) && (filemtime($cachefile) > filemtime($tplfile))
-            && (!defined("DEV") || DEV != 1)
+        // 如果没有在dev_mode且缓存文件最后修改时间比templatefile旧 直接包含缓存
+        if (file_exists($tpl_cachepath) && (filemtime($tpl_cachepath) > filemtime($tpl_path))
+            && !DEV_MODE
         ) {
-            include_once ($cachefile);
+            include_once ($tpl_cachepath);
             return;
         }
         Flow::Log()->info("缓存过期 重新编译");
-        //读取模板文件
-        $c = file_get_contents($tplfile);
-        //读取tag
+        // 读取模板文件
+        $c = file_get_contents($tpl_path);
+        // 读取tag
         $tagfilter = new F_View_BaseTags();
+
         $c = $tagfilter->apply($c);
 
-        //存储编译后的到文件
-        if (file_put_contents($cachefile, $c)) {
-            Flow::Log()->info("缓存文件{$cachefile}创建完成");
-            include_once ($cachefile);
+        // 存储编译后的到文件
+        if (file_put_contents($tpl_cachepath, $c)) {
+            Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
+            include_once ($tpl_cachepath);
         } else {
             throw new FlowException("缓存文件创建失败" . $viewname);
         }
-    }
-
-    protected function getRes() {
-        return $this->resource;
     }
 
 }

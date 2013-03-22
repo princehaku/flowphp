@@ -8,8 +8,6 @@
  */
 class F_View_BaseTags {
 
-    private $listTags = array();
-
     /**
      * 把正则符进行转义
      * 比如.转义为\.
@@ -27,49 +25,45 @@ class F_View_BaseTags {
         $source = str_replace(".", "\\.", $source);
         return $source;
     }
+    /**
+     * 把$xx.cc => xx['cc'] 转换成php的语法
+     * 一个样例串 $a<time('abc')
+     */
+    private function _tokenParser($token) {
+        // 对$xxx标签进行资源符替换
+        preg_match_all("/\\$([a-zA-Z\\d_\\.]*)/", $token, $matches_token, PREG_SET_ORDER);
+        foreach ($matches_token as $arr) {
+            $m_token = $arr[1];
+            if (strpos($m_token, '.') !== false) {
+                $cv_m_token = $this->_dotToArr($m_token);
+                $token = preg_replace("/\\$$m_token/", $cv_m_token, $token);
+            }
+        }
 
+        return $token;
+    }
+
+    private function _dotToArr($source_string) {
+        $strings = explode(".", $source_string);
+        foreach ($strings as $i => $token) {
+            if ($i == 0) {
+                $converted_string = "\$$token";
+                continue;
+            }
+            $converted_string .= "['$token']";
+        }
+        return $converted_string;
+    }
 
     public function apply($source) {
-        // %include标签替换
-        $this->parseTplInclude($source);
         // LIST标签替换
         $this->parseList($source);
-        // 替换{$_}标签为全局变量
-        $this->parseGlobalToken($source);
         // 替换全局{$}标签为单词
         $this->parseToken($source);
-        // 替换全局(%)标签为函数
-        $this->parseFunction($source);
         // 替换if标签对
         $this->parseIf($source);
 
         return $source;
-    }
-
-    /** 替换{$_xxx}标签为全局变量
-     * 比如{$_RQUEST['a']}
-     *
-     * @param type $source
-     * @return boolean
-     */
-    private
-    function parseGlobalToken(&$source) {
-        $matches = array();
-
-        preg_match_all("/\\{\\$\\_(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
-
-        if ($matches == null) {
-            return false;
-        }
-
-        foreach ($matches as $i => $j) {
-            $tagname = $j[1];
-            $keyname = "\$_" . $tagname;
-            $val = "<?php echo " . $keyname . ";?>";
-            $j[1] = $this->_regxpConvert($j[1]);
-            $source = preg_replace("/\\{\\$\\_" . $j[1] . "\\}/", $val, $source);
-        }
-        return true;
     }
 
     /** 解析<if con="xxxx">替换if标签
@@ -78,155 +72,49 @@ class F_View_BaseTags {
      */
     private function parseIf(&$source) {
         $matches = array();
-
-        preg_match_all("/\\<if\\s*?con=\"([^\\>]*)\"\\>/", $source, $matches, PREG_SET_ORDER);
+        // 替换if标签
+        preg_match_all("/\\<if\\s*?con=\"(.*?)\">/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
-            return false;
+            $matches = array();
         }
 
         foreach ($matches as $i => $j) {
-            $condition_tag = $j[1];
-            $condition_val = $condition_tag;
-            $condition_val = str_replace("==", " == ", $condition_val);
-            $condition_val = str_replace(">=", " >= ", $condition_val);
-            $condition_val = str_replace("<=", " <= ", $condition_val);
-            $condition_val = str_replace(">", " > ", $condition_val);
-            $condition_val = str_replace("<", " < ", $condition_val);
-            $matches_token = array();
-            // 对con控制内的$xxx标签进行资源符替换
-            preg_match_all("/\\$([\\S]*)(\\s|$)/", $condition_val, $matches_token, PREG_SET_ORDER);
-
-            if ($matches_token != null) {
-                foreach ($matches_token as $i1 => $j1) {
-                    $tagname = $j1[1];
-                    // 带[号认为是数组,不进行变量更换
-                    if (strpos("[", $tagname) !== false) {
-                        continue;
-                    }
-                    $converted_token = $this->convertComma($tagname, true);
-                    $tagname = $this->_regxpConvert($tagname);
-                    $condition_val = preg_replace("/\\$" . $tagname . "/", $converted_token, $condition_val, 1);
-                }
-            }
-
+            $tagname = $j[1];
+            $condition_val = $this->_tokenParser($tagname);
             $val = "<?php if ($condition_val) { ?>";
-            $condition_tag = $this->_regxpConvert($condition_tag);
-            $source = preg_replace("/\<if\s*?con=[\'\"]" . $condition_tag . "[\'\"]\>/", $val, $source, 1);
-            $source = preg_replace("/<else>/", "<?php } else { ?>", $source, 1);
-            $source = preg_replace("/<\/if>/", "<?php } ?>", $source, 1);
+            $source = preg_replace("/\\<if\\s*?con=\"" . $this->_regxpConvert($tagname) . "\"\\>/", $val, $source, 1);
         }
-
-        return true;
-    }
-
-    /** 解析{%include *}的内容
-     * 载入其他模板
-     *
-     * @param mixed $source
-     */
-    private function parseTplInclude(&$source) {
-        $matches = array();
-        // 替换{#xxx} 为 config内容
-        preg_match_all("/\\{%include (.*?)\\}/", $source, $matches, PREG_SET_ORDER);
+        // 替换elseif标签
+        preg_match_all("/\\<elseif\\s*?con=\"(.*?)\"\\/>/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
-            return false;
-        }
-        foreach ($matches as $i => $j) {
-            $keyname = $j[1];
-            if ($keyname == null) {
-                Flow::Log()->w("#include标签" . $keyname . "解析失败");
-                continue;
-            }
-            $otplfilepath = C("VIEW_DIR") . $keyname;
-
-            if (file_exists($otplfilepath)) {
-                Flow::Log()->i("Include模版文件载入完毕 " . C("VIEW_DIR") . $keyname);
-            } else {
-                Flow::Log()->e("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
-                throw new FlowException("Include模版文件不存在  " . C("VIEW_DIR") . $keyname);
-                continue;
-            }
-            $val = file_get_contents($otplfilepath);
-            $j[1] = $this->_regxpConvert($j[1]);
-            $source = preg_replace("/\\{%include " . $j[1] . "\\}/", $val, $source);
-        }
-
-        return true;
-    }
-
-    /** 解析{%xxx argv1 argv2...}的内容 替换成function的内容
-     *
-     * @param mixed $source
-     */
-    private function parseFunction(&$source) {
-        $matches = array();
-
-        preg_match_all("/\\{%([\\s\\S]*?)\\}/", $source, $matches, PREG_SET_ORDER);
-
-        if ($matches == null) {
-            return false;
+            $matches = array();
         }
 
         foreach ($matches as $i => $j) {
-            $keyname = $j[1];
-            if (empty($j[1])) {
-                Flow::Log()->w("标签" . $keyname . "解析失败");
-                continue;
-            }
-            $func = explode(" ", $j[1]);
-
-            $keyname = $func[0];
-            unset($func[0]);
-            $param = implode(",", $func);
-
-            $val = "<?php echo $keyname($param); ?>";
-            $j[1] = $this->_regxpConvert($j[1]);
-            $source = preg_replace("/\\{%" . $j[1] . "\\}/", $val, $source);
+            $tagname = $j[1];
+            $condition_val = $this->_tokenParser($tagname);
+            $val = "<?php } else if ($condition_val) { ?>";
+            $source = preg_replace("/\\<elseif\\s*?con=\"" . $this->_regxpConvert($tagname) . "\"\\/\\>/", $val, $source, 1);
         }
 
+        // 替换<else/>
+        $source = preg_replace("/<else\\/>/", "<?php } else { ?>", $source);
+        // 替换</if>
+        $source = preg_replace("/<\\/if>/", "<?php } ?>", $source);
         return true;
     }
 
-    private function convertComma($source_string, $forceRes = false) {
-
-        $pos = strpos($source_string, ".");
-
-        $converted_string = "";
-
-        if ($pos === false || $pos <= 0) {
-            $converted_string = "\$" . $source_string;
-        } else {
-            $strings = explode(".", $source_string);
-            foreach ($strings as $i => $token) {
-                // 强制变更list
-                if ($i == 0 && in_array($token, $this->listTags)) {
-                    $forceRes = false;
-                }
-                if ($i == 0 && $forceRes == false) {
-                    $converted_string = "\$$token";
-                    continue;
-                }
-                $converted_string .= "['$token']";
-            }
-            if ($forceRes) {
-                $converted_string = "\$_res" . $converted_string;
-            }
-        }
-
-        return $converted_string;
-        ;
-    }
-
-    /** 解析{$xxx}标签为实体
+    /**
+     * 解析{$xxx}标签为实体
      *
      * @param mixed $source
      */
     private function parseToken(&$source) {
         $matches = array();
         // 替换{$xxx}标签为实体
-        preg_match_all("/\\{\\$(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
+        preg_match_all("/\\{(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
             return false;
@@ -234,10 +122,9 @@ class F_View_BaseTags {
 
         foreach ($matches as $i => $j) {
             $tagname = $j[1];
-            $converted_token = $this->convertComma($tagname, true);
+            $converted_token = $this->_tokenParser($tagname);
             $val = "<?php echo $converted_token; ?>";
-            $tagname = $this->_regxpConvert($tagname);
-            $source = preg_replace("/\\{\\$" . $tagname . "\\}/", $val, $source);
+            $source = str_replace("{" . $tagname . "}", $val, $source);
         }
 
         return true;
@@ -254,28 +141,36 @@ class F_View_BaseTags {
         // 替换LIST标签
         $matches = array();
 
-        preg_match("/<list ([\s|\S]*?)>/", $source, $matches);
+        preg_match("/<list (.*?)>/", $source, $matches);
 
         if (null == $matches) {
             return false;
         }
         // 参数分离
         $parm = $matches[1];
-        preg_match("/.*?name=[\"\'\s](.*?)[\"\'\s].*?/", $parm, $tag);
         // list 的name
+        preg_match("/.*?name=\"(.*?)\"/", $parm, $tag);
         $tagname = $tag[1];
-        preg_match("/.*?id=[\"\'\s](.*?)[\"\'\s].*?/", $parm, $tag);
-        // list 的id
-        $tagid = $tag[1];
-        array_push($this->listTags, $tagid);
-        // 按照resource里面的东西替换标签;
-        $converted_token = $this->convertComma($tagname);
+        // list 的key
+        preg_match("/.*?key=\"(.*?)\"/", $parm, $tag);
+        $tag_key = isset($tag[1]) ? $tag[1] : "";
+        // list 的val
+        preg_match("/.*?val=\"(.*?)\"/", $parm, $tag);
+        $tag_val = $tag[1];
+        // 替换标签;
+        $converted_token = $this->_tokenParser($tagname);
+        $tag_val = $this->_tokenParser($tag_val);
 
         $parm = $this->_regxpConvert($parm);
-        // 替换一层
-        $source = preg_replace("/<list $parm>/", "<?php if(isset( $converted_token )) { foreach ( $converted_token as \$i$n=>\$$tagid){ ?>", $source, 1);
 
-        $source = preg_replace("/<\/list>/", "<?php } } ?>", $source, 1);
+        $keyname = "\$i$n";
+        if (!empty($tag_key)) {
+            $keyname = $tag_key;
+        }
+        // 替换一层
+        $source = preg_replace("/<list $parm>/", "<?php foreach ($converted_token as $keyname=>$tag_val){ ?>", $source, 1);
+
+        $source = preg_replace("/<\\/list>/", "<?php } ?>", $source, 1);
 
         while ($this->parseList($source, ++$n)) {
             return true;

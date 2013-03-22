@@ -14,17 +14,17 @@ class F_Core_Action {
      */
     private $_view;
 
-    public function setViewEngine($viewengine) {
-        $this->_view = $viewengine;
+    public function setViewEngine($view_engine) {
+        $this->_view = $view_engine;
     }
 
-    public function display($viewname = null) {
-        if (empty($viewname)) {
-            $viewname = strtolower(get_called_class());
-            $viewname = str_replace("action", "", $viewname);
+    public function display($view_name = null, $view_data = null) {
+        if (empty($view_name)) {
+            $view_name = strtolower(get_called_class());
+            $view_name = str_replace("action", "", $view_name);
         }
         //调用父类
-        $this->_view->display($viewname);
+        $this->_view->display($view_name, $view_data);
     }
 
     public function assign($key, $value) {
