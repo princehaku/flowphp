@@ -1,10 +1,14 @@
 <?php
+/**
+ * Copyright 2013 princehaku
+ *
+ *  Author     : baizhongwei
+ *  Blog       : http://3haku.net
+ */
 
 /**
  * 默认控制器类
  *
- * @author princehaku
- * @site http://3haku.net
  */
 
 class F_Core_Action {

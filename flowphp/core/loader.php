@@ -1,10 +1,10 @@
 <?php
 /**
- * Copyright 2012 Etao Inc.
+ * Copyright 2013 princehaku
  *
- *  FileName : loader.php
+ *  Author     : baizhongwei
  *  Created on : 13-3-21 , 下午11:49
- *  Author     : haku
+ *  Blog       : http://3haku.net
  */
 
 class F_Core_Loader {

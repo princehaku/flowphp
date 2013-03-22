@@ -1,11 +1,12 @@
 <?php
-
 /**
- * 统计类
- * 集成了系统logger
+ * Copyright 2013 princehaku
  *
- * @author        bzw <zhongwei.bzw@taobao.com>
+ *  Author     : baizhongwei
+ *  Blog       : http://3haku.net
  */
+
+
 class F_Core_Trace {
 
     public $enable = true;
@@ -42,12 +43,12 @@ class F_Core_Trace {
             return;
         }
         if (empty($this->_stat_entries[$stat_name]['start_time_ms'])) {
-            throw new FlowException('No Begin,No Ends');
+            throw new Exception('No Begin,No Ends');
         }
         $this->_stat_entries[$stat_name]['end_time_ms'] = microtime(1) * 1000;
     }
     /**
-     * 统计一次功能展现
+     * 统计展现
      *
      * @param $stat_name
      * @param $is_hits
@@ -63,7 +64,7 @@ class F_Core_Trace {
      */
     private function _reportLogger() {
         foreach ($this->_stat_entries as $stat_name => $stat_entry) {
-            $log_row = "[{$stat_name}]：";
+            $log_row = "[{$stat_name}]";
             if (isset($stat_entry['end_time_ms'])) {
                 $stat_entry['cost'] = $stat_entry['end_time_ms'] - $stat_entry['start_time_ms'];
                 unset($stat_entry['end_time_ms']);
@@ -76,14 +77,14 @@ class F_Core_Trace {
         }
     }
     /**
-     * 汇报统计的结果
+     * 汇报统计
      */
     public function report() {
         $this->_reportLogger();
         $this->clear();
     }
     /**
-     * 清除所有记录的信息
+     * 清除所有记录
      */
     public function clear() {
         $this->_stat_entries = array();

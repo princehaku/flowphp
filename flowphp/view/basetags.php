@@ -167,9 +167,8 @@ class F_View_BaseTags {
         if (!empty($tag_key)) {
             $keyname = $tag_key;
         }
-        // 替换一层
-        $source = preg_replace("/<list $parm>/", "<?php foreach ($converted_token as $keyname=>$tag_val){ ?>", $source, 1);
 
+        $source = preg_replace("/<list $parm>/", "<?php foreach ($converted_token as $keyname=>$tag_val){ ?>", $source, 1);
         $source = preg_replace("/<\\/list>/", "<?php } ?>", $source, 1);
 
         while ($this->parseList($source, ++$n)) {

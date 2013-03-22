@@ -103,7 +103,7 @@ class F_View_SViewEngine {
             Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
             include_once ($tpl_cachepath);
         } else {
-            throw new FlowException("缓存文件创建失败" . $viewname);
+            throw new Exception("缓存文件创建失败" . $viewname);
         }
     }
 

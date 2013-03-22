@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Etao Inc.
+ * Copyright 2013 princehaku
  *
  *  FileName : main.php
  *  Created on : 13-3-21 , 下午7:01

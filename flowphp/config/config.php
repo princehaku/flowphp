@@ -1,10 +1,14 @@
 <?php
+/**
+ * Copyright 2013 princehaku
+ *
+ *  Author     : baizhongwei
+ *  Blog       : http://3haku.net
+ */
 
 /**
  * 系统基础配置信息
  *
- * @author princehaku
- * @site http://3haku.net
  */
 return array(
     // 缓存目录

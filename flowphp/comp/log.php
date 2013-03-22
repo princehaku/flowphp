@@ -1,9 +1,14 @@
 <?php
+/**
+ * Copyright 2013 princehaku
+ *
+ *  Author     : baizhongwei
+ *  Blog       : http://3haku.net
+ */
 
-/** 日志类 记录用户的数据库和其他历史信息
+/**
+ * 日志类 记录用户的数据库和其他历史信息
  * 用于调试
- * @author princehaku
- * @site http://3haku.net
  */
 class F_Comp_Log {
 
@@ -34,8 +39,8 @@ class F_Comp_Log {
             $debugtrace = debug_backtrace();
             for ($i = 0; $i < count($debugtrace); $i++) {
                 $j = $debugtrace[$i];
-                // sys内的不trace
-                if (empty($j['file']) || strpos(dirname($j['file']), dirname(FLOW_PATH)) !== false) {
+                // TODO sys内的不trace
+                if (empty($j['file']) || strpos($j['file'], FLOW_PATH) !== false) {
                     continue;
                 }
                 $this->msg[$this->recordNums++] = array(
@@ -80,7 +85,6 @@ class F_Comp_Log {
             'cat' => $cat,
             'msg' => $msg
         );
-
         return $this;
     }
 

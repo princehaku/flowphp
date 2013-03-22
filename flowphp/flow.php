@@ -1,14 +1,6 @@
 <?php
 
 /**
- * flowphp核心文件
- * 初始化各项参数
- *
- * @author princehaku
- * @site http://3haku.net
- */
-
-/**
  * flowphp基类
  *
  * @author princehaku
@@ -23,6 +15,10 @@ class Flow {
      */
     private static $_log;
     /**
+     * @var F_Comp_App
+     */
+    private static $_app;
+    /**
      * 日志
      * 单例模式
      * @return F_Comp_Log
@@ -33,6 +29,18 @@ class Flow {
             Flow::$_log = new F_Comp_Log();
         }
         return Flow::$_log;
+    }
+    /**
+     * APP组件
+     * 单例模式
+     * @return F_Comp_Log
+     */
+    public static function App() {
+        if (Flow::$_app == null) {
+            //初始化日志类
+            Flow::$_app = new F_Comp_App();
+        }
+        return Flow::$_app;
     }
     public function import($path) {
         $path_arr = explode(".", $path);
@@ -57,9 +65,9 @@ class Flow {
         if (DEV_MODE) {
             ini_set("display_errors", 1);
             error_reporting(E_ALL);
-            set_exception_handler("F_Core_Errors::exceptionHandler");
-            set_error_handler("F_Core_Errors::errorHandler");
-            register_shutdown_function("F_Core_Errors::fatalShutdownHandler");
+            set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
+            set_error_handler("F_Core_ErrorHandler::errorHandler");
+            register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
         } else {
             error_reporting(0);
             ini_set("display_errors", 0);
@@ -116,20 +124,17 @@ class Flow {
             include_once $ac_path;
             Flow::Log()->info("控制文件加载完成$ac_path");
         } else {
-            Flow::Log()->error("控制文件不存在$ac_path");
-            $this->dieErrors();
+            throw new Exception("控制文件不存在$ac_path");
         }
         $action_name = $action_name . 'Action';
         if (!class_exists($action_name)) {
-            Flow::Log()->error("控制类" . $action_name . " 不存在");
-            $this->dieErrors();
+            throw new Exception("控制类" . $action_name . " 不存在");
         }
         $action = new $action_name();
 
         // 检测方法
         if (!method_exists($action, $method_name)) {
-            Flow::Log()->error("控制类" . $action_name . "没有" . $method_name . "方法");
-            $this->dieErrors();
+            throw new Exception("控制类" . $action_name . "没有" . $method_name . "方法");
         }
         $template_engine = self::$cfg['TPL_ENGINE'];
         $action->setViewEngine(new $template_engine());
@@ -140,25 +145,8 @@ class Flow {
             $action->$method_name($request);
         } catch (Exception $e) {
             Flow::Log()->error($e->getMessage());
-            $this->dieErrors();
+            throw $e;
         }
-    }
-
-    /*
-     * 打印页面日志并结束脚本
-     *
-     */
-    public function dieErrors() {
-        // 打印日志
-        if (DEV_MODE) {
-            if (!headers_sent()) {
-                header("Content-Type:text/html;encoding=utf-8;");
-            }
-            Flow::Log()->info("执行所用内存: " .
-                number_format(memory_get_usage() / 1024, 2) . "kb");
-            echo Flow::Log()->getHTML();
-        }
-        die;
     }
 
 }
