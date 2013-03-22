@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Í³¼ÆÀà
- * ¼¯³ÉÁËÏµÍ³loggerºÍsimon
+ * ç»Ÿè®¡ç±»
+ * é›†æˆäº†ç³»ç»Ÿlogger
  *
  * @author        bzw <zhongwei.bzw@taobao.com>
  */
@@ -13,14 +13,14 @@ class F_Core_Trace {
     protected $_stat_entries = array();
 
     /**
-     * µ±Ç°Í³¼Æµ½µÄ×´Ì¬ÌõÊı
+     * å½“å‰ç»Ÿè®¡åˆ°çš„çŠ¶æ€æ¡æ•°
      * @return int
      */
     public function getStatNums() {
         return count($this->_stat_entries);
     }
     /**
-     * ¿ªÊ¼¼ÆÊ±
+     * å¼€å§‹è®¡æ—¶
      *
      * @param $stat_name
      */
@@ -33,7 +33,7 @@ class F_Core_Trace {
     }
 
     /**
-     * Í£Ö¹¼ÆÊ±
+     * åœæ­¢è®¡æ—¶
      *
      * @param $stat_name
      */
@@ -47,7 +47,7 @@ class F_Core_Trace {
         $this->_stat_entries[$stat_name]['end_time_ms'] = microtime(1) * 1000;
     }
     /**
-     * Í³¼ÆÒ»´Î¹¦ÄÜÕ¹ÏÖ
+     * ç»Ÿè®¡ä¸€æ¬¡åŠŸèƒ½å±•ç°
      *
      * @param $stat_name
      * @param $is_hits
@@ -59,11 +59,11 @@ class F_Core_Trace {
         $this->_stat_entries[$stat_name]['showup'] = true;
     }
     /**
-     * »ã±¨µ½logÀïÃæ
+     * æ±‡æŠ¥åˆ°logé‡Œé¢
      */
     private function _reportLogger() {
         foreach ($this->_stat_entries as $stat_name => $stat_entry) {
-            $log_row = "[{$stat_name}]£º";
+            $log_row = "[{$stat_name}]ï¼š";
             if (isset($stat_entry['end_time_ms'])) {
                 $stat_entry['cost'] = $stat_entry['end_time_ms'] - $stat_entry['start_time_ms'];
                 unset($stat_entry['end_time_ms']);
@@ -76,14 +76,14 @@ class F_Core_Trace {
         }
     }
     /**
-     * »ã±¨Í³¼ÆµÄ½á¹û
+     * æ±‡æŠ¥ç»Ÿè®¡çš„ç»“æœ
      */
     public function report() {
         $this->_reportLogger();
         $this->clear();
     }
     /**
-     * Çå³ıËùÓĞ¼ÇÂ¼µÄĞÅÏ¢
+     * æ¸…é™¤æ‰€æœ‰è®°å½•çš„ä¿¡æ¯
      */
     public function clear() {
         $this->_stat_entries = array();

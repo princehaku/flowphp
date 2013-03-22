@@ -70,7 +70,7 @@ class F_View_SViewEngine {
         //检测缓存文件夹是否存在
         if (!file_exists($cachedir)) {
             Flow::Log()->info("缓存文件夹不存在 自动创建");
-            if (!mkdir($cachedir)) {
+            if (!mkdir($cachedir, 0777, 1)) {
                 throw new Exception("缓存文件夹" . $cachedir . "创建失败");
             }
         }

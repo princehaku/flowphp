@@ -3,12 +3,13 @@
  * Copyright 2012 Etao Inc.
  *
  *  FileName : main.php
- *  Created on : 13-3-21 , ÏÂÎç7:01
+ *  Created on : 13-3-21 , ä¸‹åˆ7:01
  *  Author     : zhongwei.bzw
  */
 class MainAction extends F_Core_Action {
 
-    public function index() {
+    public function index($request) {
+        var_dump($request);
         $this->assign("s", "bbb");
         $this->display();
     }

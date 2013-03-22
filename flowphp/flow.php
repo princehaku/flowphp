@@ -34,23 +34,27 @@ class Flow {
         }
         return Flow::$_log;
     }
-
-    private static function _autoload($class_name) {
-        $paths = explode("_", $class_name);
-        if (isset($paths[0]) && $paths[0] == "F") {
-            unset($paths[0]);
-            include strtolower(implode("/", $paths) . ".php");
+    public function import($path) {
+        $path_arr = explode(".", $path);
+        if ($path_arr[0] == 'core') {
+            unset($path_arr[0]);
+            $sys_path = implode("/", $path_arr);
+            $sys_path = FLOW_PATH . $sys_path . ".php";
+        } else {
+            $sys_path = implode("/", $path_arr);
+            $sys_path = APP_PATH . $sys_path . ".php";
         }
+        include $sys_path;
     }
-
+    /**
+     * 应用初始化
+     * @throws Exception
+     */
     public function init() {
-        // 定义路径
-        if (!defined("APP_PATH")) {
-            throw new Exception("No APP_PATH Defined");
-        }
-        spl_autoload_register("Flow::_autoload");
+        $this->import("core.core.loader");
+        spl_autoload_register("F_Core_Loader::autoLoadHandler");
         // 配置异常处理
-        if (defined("DEV") && DEV == true) {
+        if (DEV_MODE) {
             ini_set("display_errors", 1);
             error_reporting(E_ALL);
             set_exception_handler("F_Core_Errors::exceptionHandler");
@@ -63,6 +67,10 @@ class Flow {
         // 关闭zend的php4兼容
         if (ini_get('zend.ze1_compatibility_mode') == true) {
             ini_set('zend.ze1_compatibility_mode', 0);
+        }
+        // 定义路径
+        if (!defined("APP_PATH") || !defined("DEV_MODE") || !defined("FLOW_PATH")) {
+            throw new Exception("No APP_PATH or DEV_MODE or FLOW_PATH Defined");
         }
 
         @session_start();
@@ -123,7 +131,8 @@ class Flow {
             Flow::Log()->error("控制类" . $action_name . "没有" . $method_name . "方法");
             $this->dieErrors();
         }
-        $action->setViewEngine(new F_View_SViewEngine());
+        $template_engine = self::$cfg['TPL_ENGINE'];
+        $action->setViewEngine(new $template_engine());
         try {
             // 初始化请求类
             $request = new F_Request_Request();
@@ -141,12 +150,12 @@ class Flow {
      */
     public function dieErrors() {
         // 打印日志
-        if (defined("DEV") && DEV == true) {
+        if (DEV_MODE) {
             if (!headers_sent()) {
                 header("Content-Type:text/html;encoding=utf-8;");
             }
             Flow::Log()->info("执行所用内存: " .
-                number_format(memory_get_usage() / 1024, 2) . "kb", "", 0);
+                number_format(memory_get_usage() / 1024, 2) . "kb");
             echo Flow::Log()->getHTML();
         }
         die;

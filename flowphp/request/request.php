@@ -9,13 +9,13 @@
  */
 class F_Request_Request {
 
-    private $request;
+    private $params;
 
     function __construct() {
 
-        $this->request = $_GET;
+        $this->params = $_GET;
 
-        $this->request = array_merge($_POST, $this->request);
+        $this->params = array_merge($_POST, $this->params);
 
         if (Flow::$cfg['UNSET_REQS']) {
             unset($_GET);
@@ -31,10 +31,10 @@ class F_Request_Request {
      * @see strip
      */
     public function getText($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
+        if (!isset($this->params[$param])) {
             return $nullvalue;
         }
-        $s = $this->request[$param];
+        $s = $this->params[$param];
         return $s;
     }
 
@@ -43,10 +43,10 @@ class F_Request_Request {
      *
      */
     public function getSafeHtml($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
+        if (!isset($this->params[$param])) {
             return $nullvalue;
         }
-        $s = $this->request[$param];
+        $s = $this->params[$param];
         $s = preg_replace(array(
             '/<(\/?)(script|i?frame|style|html|body|title|link|meta|\?|\%)([^>]*?)>/isU', "/(<[^>]*)on[a-zA-Z] \s*=([^>]*>)/isU"
         ), "", $s);
@@ -58,10 +58,10 @@ class F_Request_Request {
      *
      */
     public function getInt($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
+        if (!isset($this->params[$param])) {
             return $nullvalue;
         }
-        return intval($this->request[$param]);
+        return intval($this->params[$param]);
     }
 
     /** 得到浮点型
@@ -69,10 +69,10 @@ class F_Request_Request {
      *
      */
     public function getFloat($param, $nullvalue = null) {
-        if (!isset($this->request[$param])) {
+        if (!isset($this->params[$param])) {
             return $nullvalue;
         }
-        return (float)$this->request[$param];
+        return (float)$this->params[$param];
     }
 
 }

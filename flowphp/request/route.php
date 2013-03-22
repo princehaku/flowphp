@@ -2,8 +2,7 @@
 
 /**
  * url分发器
- * 支持rewrite,pathinfo和普通get方式
- *
+ * 分发到对应的action和method
  * @author princehaku
  * @site http://3haku.net
  */
@@ -14,14 +13,22 @@ class F_Request_Route {
 
     protected $method;
 
+    public function getAction() {
+        return $this->action;
+    }
+
+    public function getMethod() {
+        return $this->method;
+    }
+
     public function init() {
 
         $action = 'Main';
         $method = 'index';
 
-        // 是否使用path info
         $url = $_SERVER['REQUEST_URI'];
-        $url = basename($url);
+        $url_parsed = parse_url($url);
+
         if (!empty($_GET['action'])) {
             $action = $_GET['action'];
             $url = '';
@@ -36,31 +43,28 @@ class F_Request_Route {
 
         $url = $url[0];
         // 按斜杠分拆
-        $params = explode("/", $url);
+        $params = explode("/", $url_parsed['path']);
 
-        if (!empty($params[1])) {
-            $action = $params[1];
+        if (!empty($params[0])) {
+            $action = explode(".", $params[0]);
+            $method = $action[0];
         }
-        if (!empty($params[2])) {
-            $method = $params[2];
+        if (!empty($params[1])) {
+            $method = explode(".", $params[1]);
+            $method = $method[0];
         }
         // 设置到请求里面
         foreach ($params as $i => $j) {
-            if ($i % 2 == 0 && $i != 0) {
-                $_GET[$params[$i - 1]] = $params[$i];
+            if ($i % 2 == 1 && $i != 0) {
+                if ($params[$i - 1] != "") {
+                    $_GET[$params[$i - 1]] = $params[$i];
+                }
             }
         }
 
-        $this->action = basename($action);
-        $this->method = basename($method);
-    }
+        $this->action = $action;
 
-    public function getAction() {
-        return $this->action;
-    }
-
-    public function getMethod() {
-        return $this->method;
+        $this->method = $method;
     }
 
 }

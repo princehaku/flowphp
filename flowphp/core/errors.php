@@ -5,8 +5,8 @@
  */
 class F_Core_Errors {
 
-    public static function exceptionHandler() {
-
+    public static function exceptionHandler($exception) {
+        Flow::Log()->error($exception->getMessage() . " in " . $error['file'] . " line " . $error['line']);
     }
     /**
      * 致命错误处理
