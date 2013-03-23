@@ -18,7 +18,7 @@ class F_Core_ErrorHandler {
         // 打印日志
         if (DEV_MODE) {
             if (!headers_sent()) {
-                header("Content-Type:text/html;encoding=utf-8;");
+                header("Content-Type:text/html;charset=utf-8");
             }
             echo Flow::Log()->getHTML();
         }

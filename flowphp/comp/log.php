@@ -131,7 +131,7 @@ class F_Comp_Log {
         if (count($this->msg) > 10) {
             $warp = "height:300px;overflow-y:scroll";
         }
-        $c = "<div class='syslog' style='background-color:#ccc;border:1px solid;padding:20px;'>运行日志:<br/><div style='border:1px dashed;$warp'><div>";
+        $c = "<div class='syslog' style='border:1px solid;padding:20px;'>运行日志:<br/><div style='border:1px dashed;$warp'><div>";
         foreach (($this->msg) as $i => $j) {
             $c .= $j['msg'] . "<br />";
         }

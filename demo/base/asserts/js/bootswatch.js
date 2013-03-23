@@ -3,4 +3,20 @@ $('a[rel=tooltip]').tooltip({
 });
 
 
-$('.smartnav a').smoothScroll();
+$('.smartnav a').smoothScroll({offset: -40});
+
+$(function () {
+
+    var $container = $('.thumbnails');
+
+    $container.imagesLoaded(function () {
+
+        $container.masonry({
+
+            itemSelector: '.span3'
+
+        });
+
+    });
+
+});

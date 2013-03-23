@@ -149,13 +149,19 @@ class F_View_BaseTags {
         // 参数分离
         $parm = $matches[1];
         // list 的name
-        preg_match("/.*?name=\"(.*?)\"/", $parm, $tag);
+        preg_match("/.*?from=\"(.*?)\"/", $parm, $tag);
+        if (empty($tag[1])) {
+            throw new Exception("list 标签必须包含from属性");
+        }
         $tagname = $tag[1];
         // list 的key
         preg_match("/.*?key=\"(.*?)\"/", $parm, $tag);
         $tag_key = isset($tag[1]) ? $tag[1] : "";
         // list 的val
         preg_match("/.*?val=\"(.*?)\"/", $parm, $tag);
+        if (empty($tag[1])) {
+            throw new Exception("list 标签必须包含val属性");
+        }
         $tag_val = $tag[1];
         // 替换标签;
         $converted_token = $this->_tokenParser($tagname);
