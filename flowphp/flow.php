@@ -43,17 +43,20 @@ class Flow {
         }
         return Flow::$_app;
     }
-    public function import($path) {
+
+    public static function import($path) {
         $path_arr = explode(".", $path);
         if ($path_arr[0] == 'core') {
             unset($path_arr[0]);
             $sys_path = implode("/", $path_arr);
-            $sys_path = FLOW_PATH . $sys_path . ".php";
+            $sys_path = FLOW_PATH . "/" . $sys_path . ".php";
         } else {
             $sys_path = implode("/", $path_arr);
-            $sys_path = APP_PATH . $sys_path . ".php";
+            $sys_path = APP_PATH . "/" . $sys_path . ".php";
         }
         include $sys_path;
+
+        return $path_arr[count($path_arr)];
     }
     /**
      * 应用初始化

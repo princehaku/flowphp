@@ -48,7 +48,7 @@ class F_View_SViewEngine {
      * @param $viewname
      */
 
-    public function display($viewname, $view_data) {
+    public function display($viewname, $view_data = array()) {
 
         $_res = $this->_resource;
 
@@ -60,23 +60,22 @@ class F_View_SViewEngine {
             extract($view_data);
         }
 
-        $cachedir = Flow::$cfg["appcache_dir"] . '/template/';
+        $cache_dir = Flow::$cfg["appcache_dir"] . '/template/';
 
-        $tpldir = APP_PATH . "/template/";
+        $tpl_dir = APP_PATH . "/template/";
 
         // 检测缓存文件夹是否存在
-        if (!file_exists($cachedir)) {
-            Flow::Log()->info("缓存文件夹不存在 自动创建");
-            if (!mkdir($cachedir, 0777, 1)) {
-                throw new Exception("缓存文件夹" . $cachedir . "创建失败");
+        if (!file_exists($cache_dir)) {
+            if (!mkdir($cache_dir, 0777, 1)) {
+                throw new Exception("缓存文件夹" . $cache_dir . "创建失败");
             }
         }
         // 模板文件
-        $tplfile = $tpldir . $viewname . '.htpl';
+        $tplfile = $tpl_dir . $viewname . '.htpl';
 
         $tpl_path = $tplfile;
         // 缓存文件处理
-        $tpl_cachepath = $cachedir . str_replace("/", "__", $viewname) . "__cache.php";
+        $tpl_cachepath = $cache_dir . str_replace("/", "__", $viewname) . "__cache.php";
 
 
         // 搜索模板文件是否存在

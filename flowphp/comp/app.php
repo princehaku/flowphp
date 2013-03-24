@@ -35,11 +35,16 @@ class F_Comp_App {
         if (empty($config['class'])) {
             throw new Exception("组件config必须有class");
         }
-        $comp = new $config['class']();
+        if (!empty($config['import'])) {
+            Flow::import($config['import']);
+        }
+        $class_name = $config['class'];
+        $comp = new $class_name();
         unset($config['class']);
         foreach ($config as $key => $val) {
             $comp->$key = $this->createComponent($val);
         }
+        $comp->init();
         return $comp;
     }
 
