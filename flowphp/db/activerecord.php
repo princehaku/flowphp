@@ -13,33 +13,116 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
 
     public $tableinfo;
 
-    public function where() {
+    private $_query_where = "";
+
+    private $_query_order = "";
+
+    private $_query_limit = "";
+
+    public function where($where) {
+        $this->_query_where = $where;
+        return $this;
 
     }
 
-    public function findall() {
-
-    }
-
-    public function save($record, $table_name = null) {
-
-        if (null != $table_name) {
-            $this->_fetchTableInfo($table_name);
+    public function limit($offset = null, $size = null) {
+        $this->_query_limit = " limit " . (int)$offset;
+        if ($size != null) {
+            $this->_query_limit .= "," . (int)$size;
         }
+        return $this;
+    }
+
+    public function order($order) {
+        $this->_query_order = " order by " . $order;
+        return $this;
+    }
+    /**
+     * 查询所有结果
+     * @return array|bool
+     */
+    public function findall() {
+        $res_arr = $this->query("select * from " . $this->tablename . $this->_query_where .
+            $this->_query_order . $this->_query_limit);
+        return $res_arr;
+    }
+    /**
+     * 初始化 acl要求必须指定表名
+     *
+     * @return $this|void
+     */
+    public function init() {
+        parent::init();
+        $this->tableinfo = $this->_fetchTableInfo($this->tablename);
+        return $this;
+    }
+
+    /**
+     * 保存一跳记录
+     * 要求和表的字段对应
+     * @param $record
+     * @return bool
+     * @throws Exception
+     */
+    public function save($record) {
 
         if (is_object($record)) {
             $record = (array)$record;
         }
-        $query_where = " where 1==1 and ";
-        foreach ($record as $key => $value) {
-            $value = addslashes($value);
-            if ($this->tableinfo[$key]['Key'] == 'PRI') {
-                $query_where .= "`$key` = '$value'";
-            }
+        $keys = array();
+        $values = array();
 
+        foreach ($record as $key => $value) {
+            if (DEV_MODE && !is_string($value)) {
+                throw new Exception("activeRecord的值必须是字符串类型");
+            }
+            // avoid sql inject
+            $value = addslashes($value);
+            if (empty($this->tableinfo[$key])) {
+                throw new Exception("activeRecord的值{$key}必须对应到表的字段");
+            }
+            $keys[] = "`$key`";
+            $values[] = "'$value'";
         }
 
-        echo $query_where;
+        $sql = "insert into `" . $this->tablename . "` (" . implode(",", $keys) . ") values (" .
+            implode(",", $values) . ")";
+
+        return $this->query($sql);
+    }
+
+    public function update($record) {
+
+        if (is_object($record)) {
+            $record = (array)$record;
+        }
+        $query_where = " where 1=1 and ";
+        $sets = array();
+        $has_pk = false;
+
+        foreach ($record as $key => $value) {
+            if (DEV_MODE && !is_string($value)) {
+                throw new Exception("activeRecord的值必须是字符串类型");
+            }
+            // avoid sql inject
+            $value = addslashes($value);
+            if (empty($this->tableinfo[$key])) {
+                throw new Exception("activeRecord的值{$key}必须对应到表的字段");
+            }
+            if (strpos($this->tableinfo[$key]['Key'], 'PRI') !== false) {
+                $has_pk = true;
+                $query_where .= "`$key` = '$value'";
+            }
+            $sets[] = "`$key` = '$value'";
+        }
+
+        if (!$has_pk) {
+            throw new Exception("要保存它，必须存在对应的主键");
+        }
+
+        $sql = "update " . $this->tablename . " set " . implode(",", $sets) . $query_where;
+
+        return $this->query($sql);
     }
 
     public function _fetchTableInfo($table_name) {
@@ -51,6 +134,9 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
         $dbh = $this->dbh;
 
         $ps = $dbh->query("desc $table_name");
+        if ($ps == false) {
+            throw new Exception("不存在的表 $table_name");
+        }
         $res_arr = $ps->fetchAll(PDO::FETCH_ASSOC);
         $col_infos = array();
         foreach ($res_arr as $res) {
@@ -70,9 +156,6 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
     }
 
     protected function _beforeQuery($sql) {
-        preg_match("/from (.*?) /i", $sql, $matched);
-        $table_name = trim($matched[1], "`");
-        $table_info = $this->_fetchTableInfo($table_name);
-        $this->tableinfo = $table_info;
+        return;
     }
 }
