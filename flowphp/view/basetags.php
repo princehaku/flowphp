@@ -26,8 +26,9 @@ class F_View_BaseTags {
         return $source;
     }
     /**
-     * 把$xx.cc => xx['cc'] 转换成php的语法
-     * 一个样例串 $a<time('abc')
+     * 把$a.cc<time('abc')转换成php的语法
+     * 结果为$a["cc"]<time('abc')
+     * 函数依然可以被调用
      */
     private function _tokenParser($token) {
         // 对$xxx标签进行资源符替换
@@ -42,7 +43,11 @@ class F_View_BaseTags {
 
         return $token;
     }
-
+    /**
+     * 把形如$xx.cc 转换成 xx["cc"]
+     * @param $source_string
+     * @return string
+     */
     private function _dotToArr($source_string) {
         $strings = explode(".", $source_string);
         foreach ($strings as $i => $token) {
@@ -50,7 +55,7 @@ class F_View_BaseTags {
                 $converted_string = "\$$token";
                 continue;
             }
-            $converted_string .= "['$token']";
+            $converted_string .= "[\"$token\"]";
         }
         return $converted_string;
     }

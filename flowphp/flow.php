@@ -86,9 +86,24 @@ class Flow {
         }
 
         @session_start();
-        // 加载系统默认配置文件
-        $config = include FLOW_PATH . "/config/config.php";
-        // 加载程序默认配置文件
+        // 系统默认配置
+        $config = array(
+            // 缓存目录
+            "appcache_dir" => APP_PATH . "/appcache/",
+            // 强制注销REQUEST
+            "unset_reqs" => 1,
+            // URL 分发器
+            "url_dispacher" => "sys",
+            // 跟踪错误来源
+            "trace_error" => 1,
+
+            "components" => array(
+                'file_varcache' => array(
+                    'class' => 'F_CACHE_File'
+                )
+
+            )
+        );
         // 加载所有配置文件
         self::$cfg = array_merge(self::$cfg, $config);
 
@@ -105,8 +120,8 @@ class Flow {
             }
         }
         $components = self::$cfg['components'];
-        foreach($components as $name=>$config) {
-            self::App()->setComponent($name , $config);
+        foreach ($components as $name => $config) {
+            self::App()->setComponent($name, $config);
         }
     }
     /**
