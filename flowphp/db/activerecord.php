@@ -151,7 +151,7 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
                 throw new Exception("缓存文件夹" . $cache_dir . "创建失败");
             }
         }
-        file_put_contents($cache_path, var_export($col_infos, 1));
+        file_put_contents($cache_path,'<?php return ' . var_export($col_infos, 1) . ';');
         return $col_infos;
     }
 
