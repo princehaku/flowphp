@@ -2,16 +2,18 @@
 /**
  * Copyright 2013 princehaku
  *
- *  FileName   : activerecord.php
+ *  FileName   : armanager.php
  *  Created on : 13-3-24 , 下午5:12
  *  Author     : haku
  *  Blog       : http://3haku.net
  */
-class F_DB_ActiveRecord extends F_DB_ConnectManager {
+class F_DB_ARManager extends F_DB_ConnectionManager {
 
     public $tablename;
 
     public $tableinfo;
+
+    public $lastSql;
 
     private $_query_where = "";
 
@@ -19,10 +21,11 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
 
     private $_query_limit = "";
 
-    public function where($where) {
-        $this->_query_where = $where;
-        return $this;
+    protected static $acm;
 
+    public function where($where) {
+        $this->_query_where = " where " . $where;
+        return $this;
     }
 
     public function limit($offset = null, $size = null) {
@@ -42,29 +45,47 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
      * @return array|bool
      */
     public function findall() {
-        $res_arr = $this->query("select * from " . $this->tablename . $this->_query_where .
-            $this->_query_order . $this->_query_limit);
+        $sql = "select * from " . $this->tablename . $this->_query_where .
+            $this->_query_order . $this->_query_limit;
+        $this->_clearStatues();
+        Flow::Log()->debug("[SQL] " . $sql);
+        $res_arr = $this->query($sql);
         return $res_arr;
     }
-    /**
-     * 初始化 acl要求必须指定表名
-     *
-     * @return $this|void
-     */
-    public function init() {
-        parent::init();
-        $this->tableinfo = $this->_fetchTableInfo($this->tablename);
-        return $this;
+
+    private function _clearStatues() {
+        $this->_query_where =
+        $this->_query_order = $this->_query_limit = "";
     }
 
     /**
-     * 保存一跳记录
+     * 初始化 acl要求必须指定表名
+     *
+     * @return F_DB_ARManager
+     */
+    public function table($tablename, $new_instance = false) {
+        if (self::$acm[$tablename] == null || $new_instance) {
+            self::$acm[$tablename] = clone $this;
+            self::$acm[$tablename]->tablename = $tablename;
+            self::$acm[$tablename]->tableinfo = $this->_fetchTableInfo($tablename);
+        }
+        return self::$acm[$tablename];
+    }
+
+    public function __clone() {
+    }
+    /**
+     * 保存一条记录
      * 要求和表的字段对应
      * @param $record
      * @return bool
      * @throws Exception
      */
     public function save($record) {
+
+        if (empty($record)) {
+            throw new Exception("需要保存的acriveRecord为空");
+        }
 
         if (is_object($record)) {
             $record = (array)$record;
@@ -73,7 +94,7 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
         $values = array();
 
         foreach ($record as $key => $value) {
-            if (DEV_MODE && !is_string($value)) {
+            if (!is_string($value)) {
                 throw new Exception("activeRecord的值必须是字符串类型");
             }
             // avoid sql inject
@@ -151,11 +172,12 @@ class F_DB_ActiveRecord extends F_DB_ConnectManager {
                 throw new Exception("缓存文件夹" . $cache_dir . "创建失败");
             }
         }
-        file_put_contents($cache_path,'<?php return ' . var_export($col_infos, 1) . ';');
+        file_put_contents($cache_path, '<?php return ' . var_export($col_infos, 1) . ';');
         return $col_infos;
     }
 
     protected function _beforeQuery($sql) {
+        $this->lastSql = $sql;
         return;
     }
 }

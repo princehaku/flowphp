@@ -8,7 +8,7 @@
  *  Blog       : http://3haku.net
  */
 
-class F_CACHE_File implements ArrayAccess{
+class F_Cache_File implements ArrayAccess{
 
     public function put($key, $value) {
 

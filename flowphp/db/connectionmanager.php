@@ -8,13 +8,15 @@
  * @site http://3haku.net
  */
 
-class F_DB_ConnectManager {
+class F_DB_ConnectionManager {
 
     public $connectionString = "";
 
     public $username;
 
     public $password;
+
+    public $charset;
     /**
      * res指针
      *
@@ -31,10 +33,14 @@ class F_DB_ConnectManager {
         preg_match("/dbname=(.*?);+/", $this->connectionString, $matches);
         $this->dbname = $matches[1];
         $this->dbh = $dbh;
+        if (!empty($this->charset)) {
+            $this->query("set names " . $this->charset);
+        }
     }
     /**
      * 执行一条sql语句
      * 返回数组或者bool
+     *
      * @param $sql
      * @return array|bool
      */
@@ -54,6 +60,7 @@ class F_DB_ConnectManager {
     }
     /**
      * 得到底层原始的pdo
+     *
      * @return PDO
      */
     public function getPdoObject() {
