@@ -56,6 +56,7 @@ class F_DB_ConnectionManager {
     }
 
     protected function _beforeQuery($sql) {
+        Flow::Log()->debug("[SQL] " . $sql);
         return;
     }
     /**

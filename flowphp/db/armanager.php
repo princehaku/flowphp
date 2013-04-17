@@ -48,7 +48,6 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         $sql = "select * from " . $this->tablename . $this->_query_where .
             $this->_query_order . $this->_query_limit;
         $this->_clearStatues();
-        Flow::Log()->debug("[SQL] " . $sql);
         $res_arr = $this->query($sql);
         return $res_arr;
     }
@@ -64,7 +63,7 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
      * @return F_DB_ARManager
      */
     public function table($tablename, $new_instance = false) {
-        if (self::$acm[$tablename] == null || $new_instance) {
+        if (empty(self::$acm[$tablename]) || $new_instance) {
             self::$acm[$tablename] = clone $this;
             self::$acm[$tablename]->tablename = $tablename;
             self::$acm[$tablename]->tableinfo = $this->_fetchTableInfo($tablename);
@@ -87,7 +86,7 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
             throw new Exception("需要保存的acriveRecord为空");
         }
 
-        if (is_object($record)) {
+        if (!is_array($record)) {
             $record = (array)$record;
         }
         $keys = array();
@@ -109,7 +108,12 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         $sql = "insert into `" . $this->tablename . "` (" . implode(",", $keys) . ") values (" .
             implode(",", $values) . ")";
 
-        return $this->query($sql);
+        $query_status = $this->query($sql);
+        $error_info = $this->dbh->errorInfo();
+        if ($error_info[2] != null) {
+            throw New Exception("保存失败，原因: " . $error_info[2]);
+        }
+        return $query_status;
     }
 
     public function update($record) {
@@ -142,8 +146,12 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         }
 
         $sql = "update " . $this->tablename . " set " . implode(",", $sets) . $query_where;
-
-        return $this->query($sql);
+        $query_status = $this->query($sql);
+        $error_info = $this->dbh->errorInfo();
+        if ($error_info[2] != null) {
+            throw New Exception("更新失败，原因: " . $error_info[2]);
+        }
+        return $query_status;
     }
 
     public function _fetchTableInfo($table_name) {
@@ -177,6 +185,7 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
     }
 
     protected function _beforeQuery($sql) {
+        parent::_beforeQuery($sql);
         $this->lastSql = $sql;
         return;
     }

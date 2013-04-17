@@ -10,6 +10,27 @@
 
 class F_Comp_App {
     private $comp_config = array();
+    /*
+     * 打印页面日志并结束脚本
+     *
+     */
+    public static function showLogs() {
+        // 打印日志
+        if (DEV_MODE) {
+            if (!headers_sent()) {
+                header("Content-Type:text/html;charset=utf-8");
+            }
+            if (PHP_SAPI == 'cli') {
+                $errors = FLow::Log()->getDatas();
+                foreach($errors as $message) {
+                    echo implode(" ", $message);
+                    echo "\n";
+                }
+            } else {
+                echo Flow::Log()->getHTML();
+            }
+        }
+    }
 
     public function setComponent($name, $config) {
         $this->comp_config[$name] = $config;

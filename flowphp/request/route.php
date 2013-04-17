@@ -3,6 +3,7 @@
 /**
  * url分发器
  * 分发到对应的action和method
+ *
  * @author princehaku
  * @site http://3haku.net
  */
@@ -21,8 +22,7 @@ class F_Request_Route {
         return $this->method;
     }
 
-    public function init() {
-
+    private function _routeRequest() {
         $action = 'Main';
         $method = 'index';
 
@@ -65,6 +65,23 @@ class F_Request_Route {
         $this->action = $action;
 
         $this->method = $method;
+    }
+
+    private function _routeCli() {
+        // 拆开
+        $this->action = $_SERVER['argv'][1];
+
+        $this->method = $_SERVER['argv'][2];
+
+    }
+
+    public function init() {
+
+        if (PHP_SAPI == 'cli') {
+            $this->_routeCli();
+        } else {
+            $this->_routeRequest();
+        }
     }
 
 }

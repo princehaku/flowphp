@@ -15,14 +15,8 @@ class F_Core_ErrorHandler {
      *
      */
     public static function dieErrorLogs() {
-        // 打印日志
-        if (DEV_MODE) {
-            if (!headers_sent()) {
-                header("Content-Type:text/html;charset=utf-8");
-            }
-            echo Flow::Log()->getHTML();
-        }
-        die;
+        F_Comp_App::showLogs();
+        exit(0);
     }
 
     public static function exceptionHandler($exception) {

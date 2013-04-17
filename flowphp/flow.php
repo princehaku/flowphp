@@ -56,7 +56,7 @@ class Flow {
         }
         include $sys_path;
 
-        return $path_arr[count($path_arr)];
+        return $path_arr[count($path_arr) -1];
     }
     /**
      * 应用初始化
