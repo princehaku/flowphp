@@ -109,10 +109,6 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
             implode(",", $values) . ")";
 
         $query_status = $this->query($sql);
-        $error_info = $this->dbh->errorInfo();
-        if ($error_info[2] != null) {
-            throw New Exception("保存失败，原因: " . $error_info[2]);
-        }
         return $query_status;
     }
 
@@ -147,18 +143,15 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
 
         $sql = "update " . $this->tablename . " set " . implode(",", $sets) . $query_where;
         $query_status = $this->query($sql);
-        $error_info = $this->dbh->errorInfo();
-        if ($error_info[2] != null) {
-            throw New Exception("更新失败，原因: " . $error_info[2]);
-        }
         return $query_status;
     }
 
     public function _fetchTableInfo($table_name) {
-        $cache_dir = Flow::$cfg["appcache_dir"] . '/db/';
-        $cache_path = $cache_dir . $this->dbname . "_" . $table_name . ".php";
-        if (file_exists($cache_path) && !DEV_MODE) {
-            return include $cache_path;
+        $f_cache = new F_Cache_File();
+        $f_cache->setBaseDir(Flow::$cfg["appcache_dir"]);
+
+        if (!DEV_MODE && null != $f_cache['db.' . $this->dbname . "_" . $table_name]) {
+            return $f_cache['db.' . $this->dbname . "_" . $table_name];
         }
         $dbh = $this->dbh;
 
@@ -174,13 +167,7 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
                 //die($res['Field']);
             }
         }
-        // 检测缓存文件夹是否存在
-        if (!file_exists($cache_dir)) {
-            if (!mkdir($cache_dir, 0777, 1)) {
-                throw new Exception("缓存文件夹" . $cache_dir . "创建失败");
-            }
-        }
-        file_put_contents($cache_path, '<?php return ' . var_export($col_infos, 1) . ';');
+        $f_cache['db.' . $this->dbname . "_" . $table_name] = $col_infos;
         return $col_infos;
     }
 
