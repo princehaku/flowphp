@@ -144,8 +144,7 @@ class Flow {
         // 加载对应的控制类
         $ac_path = APP_PATH . strtolower("/action/$action_name.class.php");
         if (file_exists($ac_path)) {
-            include_once $ac_path;
-            Flow::Log()->info("控制文件加载完成$ac_path");
+            include $ac_path;
         } else {
             throw new Exception("控制文件不存在$ac_path");
         }

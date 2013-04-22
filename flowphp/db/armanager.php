@@ -85,7 +85,6 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         if (empty($record)) {
             throw new Exception("需要保存的acriveRecord为空");
         }
-
         if (!is_array($record)) {
             $record = (array)$record;
         }
@@ -93,13 +92,19 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         $values = array();
 
         foreach ($record as $key => $value) {
-            if (!is_string($value)) {
-                throw new Exception("activeRecord的值必须是字符串类型");
+            if (empty($value)) {
+                $value = "";
+            }
+            if (is_bool($value)) {
+                $value = $value . "";
+            }
+            if (DEV_MODE && !is_string($value)) {
+                throw new Exception("activeRecord{$key}的值必须是字符串类型");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord的值{$key}必须对应到表的字段");
+                throw new Exception("activeRecord{$key}的值必须对应到表的字段");
             }
             $keys[] = "`$key`";
             $values[] = "'$value'";
@@ -122,13 +127,19 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
         $has_pk = false;
 
         foreach ($record as $key => $value) {
+            if (empty($value)) {
+                $value = "";
+            }
+            if (is_bool($value)) {
+                $value = $value . "";
+            }
             if (DEV_MODE && !is_string($value)) {
-                throw new Exception("activeRecord的值必须是字符串类型");
+                throw new Exception("activeRecord{$key}的值必须是字符串类型");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord的值{$key}必须对应到表的字段");
+                throw new Exception("activeRecord{$key}的值必须对应到表的字段");
             }
             if (strpos($this->tableinfo[$key]['Key'], 'PRI') !== false) {
                 $has_pk = true;
