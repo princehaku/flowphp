@@ -62,7 +62,7 @@ class Flow {
      * 应用初始化
      * @throws Exception
      */
-    public function init() {
+    public function init($config) {
         $this->import("core.core.loader");
         spl_autoload_register("F_Core_Loader::autoLoadHandler");
         // 配置异常处理
@@ -87,7 +87,7 @@ class Flow {
 
         @session_start();
         // 系统默认配置
-        $config = array(
+        $config_default = array(
             // 缓存目录
             "appcache_dir" => APP_PATH . "/appcache/",
             // 强制注销REQUEST
@@ -104,6 +104,8 @@ class Flow {
 
             )
         );
+        // 加载所有配置文件
+        self::$cfg = array_merge(self::$cfg, $config_default);
         // 加载所有配置文件
         self::$cfg = array_merge(self::$cfg, $config);
 
