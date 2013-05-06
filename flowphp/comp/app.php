@@ -8,29 +8,19 @@
  *  Blog       : http://3haku.net
  */
 
+/**
+ * app核心应用组件类，用于提供Flow::app()->$alias的单例访问支持
+ * 支持从配置生成一个类
+ * 并且纳入到app管理中
+ *
+ * Class F_Comp_App
+ */
 class F_Comp_App {
-    private $comp_config = array();
-    /*
-     * 打印页面日志并结束脚本
-     *
+    /**
+     * 组件的配置
+     * @var array
      */
-    public static function showLogs() {
-        // 打印日志
-        if (DEV_MODE) {
-            if (!headers_sent()) {
-                header("Content-Type:text/html;charset=utf-8");
-            }
-            if (PHP_SAPI == 'cli') {
-                $errors = FLow::Log()->getDatas();
-                foreach($errors as $message) {
-                    echo implode(" ", $message);
-                    echo "\n";
-                }
-            } else {
-                echo Flow::Log()->getHTML();
-            }
-        }
-    }
+    private $comp_config = array();
 
     public function setComponent($name, $config) {
         $this->comp_config[$name] = $config;

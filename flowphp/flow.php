@@ -56,7 +56,7 @@ class Flow {
         }
         include $sys_path;
 
-        return $path_arr[count($path_arr) -1];
+        return $path_arr[count($path_arr) - 1];
     }
     /**
      * 应用初始化
@@ -144,7 +144,7 @@ class Flow {
         $dispatcher = new F_Cli_Route();
         $dispatcher->init();
         $action_name = $dispatcher->getAction();
-        $method_name = $dispatcher->getMethod();// 加载对应的控制类
+        $method_name = $dispatcher->getMethod(); // 加载对应的控制类
         $ac_path = APP_PATH . strtolower("/command/$action_name.class.php");
         if (file_exists($ac_path)) {
             include $ac_path;
@@ -203,4 +203,25 @@ class Flow {
         $action->$method_name();
     }
 
+    /*
+     * 打印页面日志并结束脚本
+     *
+     */
+    public static function showLogs() {
+        // 打印日志
+        if (DEV_MODE) {
+            if (!headers_sent()) {
+                header("Content-Type:text/html;charset=utf-8");
+            }
+            if (PHP_SAPI == 'cli') {
+                $errors = FLow::Log()->getDatas();
+                foreach ($errors as $message) {
+                    echo implode(" ", $message);
+                    echo "\n";
+                }
+            } else {
+                echo Flow::Log()->getHTML();
+            }
+        }
+    }
 }

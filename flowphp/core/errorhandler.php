@@ -15,7 +15,7 @@ class F_Core_ErrorHandler {
      *
      */
     public static function dieErrorLogs() {
-        F_Comp_App::showLogs();
+        Flow::showLogs();
         exit(0);
     }
 
