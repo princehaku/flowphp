@@ -14,9 +14,9 @@ return array(
     "components" => array(
         "acm" => array(
             "class" => "F_DB_ARManager",
-            'connectionString' => 'mysql:host=10.232.41.141;dbname=mido;charset=utf8',
-            'username' => 'root',
-            'password' => 'taozi_123',
+            'connectionString' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8',
+            'username' => '',
+            'password' => '',
             'charset' => 'utf8'
         )
     )
