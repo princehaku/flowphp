@@ -25,7 +25,7 @@
 
             <div class="nav-collapse collapse smartnav" id="main-menu">
                 <ul class="nav" id="main-menu-left">
-                    <li><a href="#comic">Comic</a></li>
+                    <li class='active'><a href="#comic">Comic</a></li>
                     <li><a href="#movie">Movie</a></li>
                     <li><a href="#game">Game</a></li>
                     <li><a href="#tech">Technolegy</a></li>
@@ -38,39 +38,37 @@
     <div id="comic">
         漫画
         <ul class="thumbnails">
-            <list from="$entry" val="$r">
-
+            <list from="$comicnodes" val="$vo">
                 <li class="span3">
                     <div class="thumbnail">
-                        <img src="http://i-7.vcimg.com/crop/e2454ce66185b45eac7b2c9f3a32370071972(600x)/thumb.jpg"/>
-
+                        <img src="{$vo.main_pic}"/>
                         <div class="caption">
-                            <p class="title">问题儿童都来自异世界</p>
-
-                            <div class="intro">
-                                对世界已经厌烦的逆回十六夜收到了一封邀请函。当他看清信中内容写著：
-                                「望你舍弃一切，前来『箱庭』」的瞬间──他来到了完美无缺的异世界！
-                                眼前是带著猫的沉默少女与态度高傲的大小姐，还有召唤他们的罪魁祸首──
-                                黑兔。当黑兔正在说明箱庭世界的规则时，十六夜却突然表示：「来打倒魔王吧！」
-                                ?黑兔没有拜托你做那种事情呀!三个超级问题儿和黑兔的明天将会前往何方？
-                            </div>
+                            <p class="title">{$vo.title}</p>
+                            <div class="intro">{$vo.description}</div>
                             <a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a>
                         </div>
                     </div>
                 </li>
-
             </list>
 
         </ul>
     </div>
     <div id="movie">
         电影
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+        <ul class="thumbnails">
+            <list from="$movienodes" val="$vo">
+                <li class="span3">
+                    <div class="thumbnail">
+                        <img src="{$vo.main_pic}"/>
+                        <div class="caption">
+                            <p class="title">{$vo.title}</p>
+                            <div class="intro">{$vo.description}</div>
+                            <a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a>
+                        </div>
+                    </div>
+                </li>
+            </list>
+        </ul>
     </div>
     <div id="game">
         电影
@@ -117,6 +115,7 @@
 <script src="{Flow::$cfg['base_url']}/asserts/js/jquery.smooth-scroll.min.js"></script>
 <script src="{Flow::$cfg['base_url']}/asserts/js/bootstrap.min.js"></script>
 <script src="{Flow::$cfg['base_url']}/asserts/js/bootswatch.js"></script>
+<script src="{Flow::$cfg['base_url']}/asserts/js/jquery.masonry.min.js"></script>
 
 
 </body>

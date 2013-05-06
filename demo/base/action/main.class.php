@@ -10,11 +10,13 @@ class MainAction extends F_Core_Action {
 
     public function index() {
         $this->request->getText("a");
-        $dbm = Flow::App()->dbm;
-        $nodes = $dbm->query("select * from entry limit 10;");
-        $node = $nodes[0];
-        $dbm->save($node);
+        $entry_acm = Flow::App()->acm->table("entry");
 
+        $comicnodes = $entry_acm->where("cat='cartoon'")->order("publish_date desc, `dsr_score` desc")->limit("30")->findall();
+        $movienodes = $entry_acm->where("cat='movie'")->order("publish_date desc, `dsr_score` desc")->limit("30")->findall();
+
+        $this->assign("comicnodes", $comicnodes);
+        $this->assign("movienodes", $movienodes);
         $this->display();
     }
 }

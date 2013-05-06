@@ -14,9 +14,12 @@ return array(
         "module.*",
     ),
     "components" => array(
-        "dbm" => array(
-            "class" => "F_DB_ActiveRecordManager",
-            'dbName' => 'yiqizhai'
+        "acm" => array(
+            "class" => "F_DB_ARManager",
+            'connectionString' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8',
+            'username' => '',
+            'password' => '',
+            'charset' => 'utf8'
         )
     )
 );
