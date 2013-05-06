@@ -3,11 +3,12 @@
 /**
  * Request 请求重构类
  * 加强安全性和易用性
+ * 用于web项目
  *
  * @author princehaku
  * @site http://3haku.net
  */
-class F_Request_Request {
+class F_Web_Request {
 
     private $params;
 

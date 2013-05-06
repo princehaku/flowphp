@@ -7,8 +7,7 @@
  * @author princehaku
  * @site http://3haku.net
  */
-
-class F_Request_Route {
+class F_Web_Route {
 
     protected $action;
 
@@ -76,12 +75,7 @@ class F_Request_Route {
     }
 
     public function init() {
-
-        if (PHP_SAPI == 'cli') {
-            $this->_routeCli();
-        } else {
-            $this->_routeRequest();
-        }
+        $this->_routeRequest();
     }
 
 }

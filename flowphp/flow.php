@@ -46,7 +46,7 @@ class Flow {
 
     public static function import($path) {
         $path_arr = explode(".", $path);
-        if ($path_arr[0] == 'core') {
+        if ($path_arr[0] == "core") {
             unset($path_arr[0]);
             $sys_path = implode("/", $path_arr);
             $sys_path = FLOW_PATH . "/" . $sys_path . ".php";
@@ -62,7 +62,7 @@ class Flow {
      * 应用初始化
      * @throws Exception
      */
-    public function init($config) {
+    public function init($config = array()) {
         $this->import("core.core.loader");
         spl_autoload_register("F_Core_Loader::autoLoadHandler");
         // 配置异常处理
@@ -77,8 +77,8 @@ class Flow {
             ini_set("display_errors", 0);
         }
         // 关闭zend的php4兼容
-        if (ini_get('zend.ze1_compatibility_mode') == true) {
-            ini_set('zend.ze1_compatibility_mode', 0);
+        if (ini_get("zend.ze1_compatibility_mode") == true) {
+            ini_set("zend.ze1_compatibility_mode", 0);
         }
         // 定义路径
         if (!defined("APP_PATH") || !defined("DEV_MODE") || !defined("FLOW_PATH")) {
@@ -98,8 +98,8 @@ class Flow {
             "trace_error" => 1,
 
             "components" => array(
-                'file_varcache' => array(
-                    'class' => 'F_CACHE_File'
+                "file_varcache" => array(
+                    "class" => "F_Cache_File"
                 )
 
             )
@@ -121,7 +121,7 @@ class Flow {
                 }
             }
         }
-        $components = self::$cfg['components'];
+        $components = self::$cfg["components"];
         foreach ($components as $name => $config) {
             self::App()->setComponent($name, $config);
         }
@@ -133,11 +133,46 @@ class Flow {
         // 初始化各种东西
         $this->init();
 
-        //加载url分析类 分析url
-        if (self::$cfg['url_dispacher'] != "sys") {
-            $dispatcher = new self::$cfg['url_dispacher'];
+        if (PHP_SAPI == "cli") {
+            $this->_runCli();
         } else {
-            $dispatcher = new F_Request_Route();
+            $this->_runWeb();
+        }
+    }
+
+    private function _runCli() {
+        $dispatcher = new F_Cli_Route();
+        $dispatcher->init();
+        $action_name = $dispatcher->getAction();
+        $method_name = $dispatcher->getMethod();// 加载对应的控制类
+        $ac_path = APP_PATH . strtolower("/command/$action_name.class.php");
+        if (file_exists($ac_path)) {
+            include $ac_path;
+        } else {
+            throw new Exception("Cli文件不存在$ac_path");
+        }
+        $action_name = $action_name . "Command";
+        if (!class_exists($action_name)) {
+            throw new Exception("Cli类{$action_name} 不存在");
+        }
+        $action = new $action_name();
+
+        // 检测方法
+        if (!method_exists($action, $method_name)) {
+            throw new Exception("Cli类{$action_name} 没有{$method_name} 方法");
+        }
+        $request = new F_Cli_Request();
+        $action->request = $request;
+        // 执行方法
+        $action->$method_name();
+    }
+
+    private function _runWeb() {
+        // 加载url分析类 分析url
+        if (self::$cfg["url_dispacher"] != "sys") {
+            $dispatcher = new self::$cfg["url_dispacher"];
+        } else {
+            $dispatcher = new F_Web_Route();
         }
         $dispatcher->init();
         $action_name = $dispatcher->getAction();
@@ -150,19 +185,19 @@ class Flow {
         } else {
             throw new Exception("控制文件不存在$ac_path");
         }
-        $action_name = $action_name . 'Action';
+        $action_name = $action_name . "Action";
         if (!class_exists($action_name)) {
-            throw new Exception("控制类" . $action_name . " 不存在");
+            throw new Exception("控制类{$action_name} 不存在");
         }
         $action = new $action_name();
 
         // 检测方法
         if (!method_exists($action, $method_name)) {
-            throw new Exception("控制类" . $action_name . "没有" . $method_name . "方法");
+            throw new Exception("Cli类{$action_name} 没有{$method_name} 方法");
         }
         // 初始化action的一些组件
         $action->setViewEngine(new F_View_SViewEngine());
-        $request = new F_Request_Request();
+        $request = new F_Web_Request();
         $action->request = $request;
         // 执行方法
         $action->$method_name();

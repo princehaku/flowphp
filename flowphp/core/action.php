@@ -13,7 +13,7 @@
 
 class F_Core_Action {
     /**
-     * @var F_Request_Request
+     * @var F_Web_Request
      */
     public $request;
 

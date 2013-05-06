@@ -162,7 +162,7 @@ class F_Comp_Log {
     }
 
     /**
-     * 得到xml
+     * 得到数据
      */
     public function getDatas() {
         return $this->msg;
