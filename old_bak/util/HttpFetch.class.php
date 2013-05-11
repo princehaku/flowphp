@@ -6,10 +6,9 @@
  */
 
 class HttpFetch {
-    /** Curl类
+    /** Curl handler
      *
      */
-
     private $curl;
     /** cookie字符串
      */
@@ -57,7 +56,7 @@ class HttpFetch {
                 $this->cookie = $this->cookie . ';';
             }
             if (isset($r[1])) {
-                $this->cookie .= trim(str_replace("\r\n", "", $r[1]));
+                $this->cookie .= trim(str_replace("\n", "", $r[1]));
             }
         }
         //放入调试栈
@@ -104,7 +103,7 @@ class HttpFetch {
                 $this->cookie = $this->cookie . ';';
             }
             if (isset($r[1])) {
-                $this->cookie .= trim(str_replace("\r\n", "", $r[1]));
+                $this->cookie .= trim(str_replace("\n", "", $r[1]));
             }
         }
 

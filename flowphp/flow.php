@@ -145,21 +145,26 @@ class Flow {
         $dispatcher->init();
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod(); // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/command/$action_name.class.php");
-        if (file_exists($ac_path)) {
-            include $ac_path;
+        $ac_path = APP_PATH . strtolower("/command/");
+        if (file_exists($ac_path . "$action_name.class.php")) {
+            include $ac_path . "$action_name.class.php";
         } else {
-            throw new Exception("Cli文件不存在$ac_path");
+            $files = array_diff(scandir($ac_path), array(".", ".."));
+            array_walk($files, function (&$val) {
+                $val = str_replace(".class.php", "", $val);
+            });
+            throw new Exception("命令不存在$ac_path\n支持的命令有" . implode("\n", $files));
         }
         $action_name = $action_name . "Command";
         if (!class_exists($action_name)) {
-            throw new Exception("Cli类{$action_name} 不存在");
+            throw new Exception("{$action_name} 不存在");
         }
         $action = new $action_name();
 
         // 检测方法
         if (!method_exists($action, $method_name)) {
-            throw new Exception("Cli类{$action_name} 没有{$method_name} 方法");
+            $methods = get_class_methods($action);
+            throw new Exception("{$action_name} 没有{$method_name} 方法\n支持的命令有" . implode("\n", $methods));
         }
         $request = new F_Cli_Request();
         $action->request = $request;
