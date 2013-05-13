@@ -8,9 +8,9 @@
  *  Blog       : http://3haku.net
  */
 /**
- * Class F_DB_ARManager
+ * Class F_DB_ArManager
  */
-class F_DB_ARManager extends F_DB_ConnectionManager {
+class F_DB_ArManager extends F_DB_ConnectionManager {
 
     public $tablename;
 
@@ -79,7 +79,7 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
     /**
      * 初始化 acl要求必须指定表名
      *
-     * @return F_DB_ARManager
+     * @return F_DB_ArManager
      */
     public function table($tablename, $new_instance = false) {
         if (empty(self::$acm[$tablename]) || $new_instance) {

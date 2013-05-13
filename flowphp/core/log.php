@@ -10,7 +10,7 @@
  * 日志类 记录用户的数据库和其他历史信息
  * 用于调试
  */
-class F_Comp_Log {
+class F_Core_Log {
 
     const LEVEL_DEBUG = 1;
 
@@ -64,7 +64,7 @@ class F_Comp_Log {
      * 记录调试信息
      *
      * @param $msg
-     * @return F_Comp_Log
+     * @return F_Core_Log
      */
     public function debug($msg, $cat = "") {
         if ($this->logLevel & self::LEVEL_DEBUG != self::LEVEL_DEBUG) {

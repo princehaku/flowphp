@@ -13,9 +13,9 @@
  * 支持从配置生成一个类
  * 并且纳入到app管理中
  *
- * Class F_Comp_App
+ * Class F_Core_App
  */
-class F_Comp_App {
+class F_Core_App {
     /**
      * 组件的配置
      * @var array

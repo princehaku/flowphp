@@ -13,7 +13,7 @@ return array(
     ),
     "components" => array(
         "acm" => array(
-            "class" => "F_DB_ARManager",
+            "class" => "F_DB_ArManager",
             'connectionString' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8',
             'username' => '',
             'password' => '',

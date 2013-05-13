@@ -11,22 +11,22 @@ class Flow {
 
     public static $cfg = array();
     /**
-     * @var F_Comp_Log
+     * @var F_Core_Log
      */
     private static $_log;
     /**
-     * @var F_Comp_App
+     * @var F_Core_App
      */
     private static $_app;
     /**
      * 日志
      * 单例模式
-     * @return F_Comp_Log
+     * @return F_Core_Log
      */
     public static function Log() {
         if (Flow::$_log == null) {
             //初始化日志类
-            Flow::$_log = new F_Comp_Log();
+            Flow::$_log = new F_Core_Log();
         }
         return Flow::$_log;
     }
@@ -34,12 +34,12 @@ class Flow {
      * APP组件
      * 单例模式
      *
-     * @return F_Comp_App
+     * @return F_Core_App
      */
     public static function App() {
         if (Flow::$_app == null) {
             //初始化日志类
-            Flow::$_app = new F_Comp_App();
+            Flow::$_app = new F_Core_App();
         }
         return Flow::$_app;
     }

@@ -18,7 +18,9 @@ class F_Core_Loader {
 
         if (isset($paths[0]) && $paths[0] == "F") {
             unset($paths[0]);
-            include FLOW_PATH . strtolower(implode("/", $paths) . ".php");
+            $lastp = $paths[(count($paths))];
+            unset($paths[count($paths)]);
+            include FLOW_PATH . strtolower(implode("/", $paths)) . "/" . lcfirst($lastp) . ".php";
         }
     }
 }

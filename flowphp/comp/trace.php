@@ -6,7 +6,9 @@
  *  Blog       : http://3haku.net
  */
 
-
+/**
+ * Class F_Comp_Trace
+ */
 class F_Comp_Trace {
 
     public $enable = true;
