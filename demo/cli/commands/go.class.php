@@ -9,7 +9,7 @@
  */
 class GoCommand extends F_Core_Command {
 
-    public function fetch() {
+    public function actionFetch() {
        echo $this->request->opt('url');
     }
 }

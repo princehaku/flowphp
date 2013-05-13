@@ -121,7 +121,9 @@ class Flow {
         // 合并配置文件
         self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
         // 合并ENV里面的配置
-        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
+        if (defined("ENV")) {
+            self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
+        }
 
         $components = self::$cfg["components"];
         foreach ($components as $name => $config) {
@@ -134,8 +136,7 @@ class Flow {
     public function run() {
         // 初始化各种东西
         $this->init();
-
-        if (PHP_SAPI == "cli") {
+        if (PHP_SAPI === "cli") {
             $this->_runCli();
         } else {
             $this->_runWeb();
@@ -201,7 +202,7 @@ class Flow {
         $method_name = "action" . $method_name;
         // 检测方法
         if (!method_exists($action, $method_name)) {
-            throw new Exception("Cli类{$action_name} 没有{$method_name} 方法");
+            throw new Exception("控制类{$action_name} 没有{$method_name} 方法");
         }
         // 初始化action的一些组件
         $action->setViewEngine(new F_View_SViewEngine());

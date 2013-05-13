@@ -8,7 +8,7 @@
  */
 class MainAction extends F_Core_Action {
 
-    public function index() {
+    public function actionIndex() {
         $this->request->getText("a");
         $entry_acm = Flow::App()->acm->table("entry");
 
