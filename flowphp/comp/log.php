@@ -35,7 +35,7 @@ class F_Comp_Log {
      * @return $this
      */
     public function traceLog($debugtrace = null) {
-        if (Flow::$cfg["trace_error"]) {
+        if (!(isset(Flow::$cfg["trace_error"]) && Flow::$cfg["trace_error"] == false)) {
             if (empty($debugtrace)) {
                 $debugtrace = debug_backtrace();
             }

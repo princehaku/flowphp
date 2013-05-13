@@ -178,7 +178,8 @@ class F_DB_ARManager extends F_DB_ConnectionManager {
 
     public function _fetchTableInfo($table_name) {
         $f_cache = new F_Cache_File();
-        $f_cache->setBaseDir(Flow::$cfg["appcache_dir"]);
+        $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
+        $f_cache->setBaseDir($appcache_dir);
 
         if (!DEV_MODE && null != $f_cache["db." . $this->dbname . "_" . $table_name]) {
             return $f_cache["db." . $this->dbname . "_" . $table_name];

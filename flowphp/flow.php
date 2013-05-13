@@ -58,6 +58,28 @@ class Flow {
 
         return $path_arr[count($path_arr) - 1];
     }
+
+    /**
+     * 包含一个目录下的所有配置文件 $cfg_dir 已/结尾
+     * @param $cfg_dir
+     * @return array
+     */
+    private function _includeCfg($cfg_dir) {
+        $cfg = array();
+        if (file_exists($cfg_dir)) {
+            $config_files = scandir($cfg_dir);
+            foreach ($config_files as $i => $config_file) {
+                $r = explode(".", $config_file);
+                $ext = $r[count($r) - 1];
+                if ($ext == "php" && file_exists($cfg_dir . $config_file)) {
+                    $config = include $cfg_dir . $config_file;
+                    // 合并配置文件
+                    $cfg = array_merge($cfg, $config);
+                }
+            }
+        }
+        return $cfg;
+    }
     /**
      * 应用初始化
      * @throws Exception
@@ -76,26 +98,14 @@ class Flow {
             error_reporting(0);
             ini_set("display_errors", 0);
         }
-        // 关闭zend的php4兼容
-        if (ini_get("zend.ze1_compatibility_mode") == true) {
-            ini_set("zend.ze1_compatibility_mode", 0);
-        }
         // 定义路径
         if (!defined("APP_PATH") || !defined("DEV_MODE") || !defined("FLOW_PATH")) {
             throw new Exception("No APP_PATH or DEV_MODE or FLOW_PATH Defined");
         }
 
-        @session_start();
+        session_start();
         // 系统默认配置
         $config_default = array(
-            // 缓存目录
-            "appcache_dir" => APP_PATH . "/appcache/",
-            // 强制注销REQUEST
-            "unset_reqs" => 1,
-            // URL 分发器
-            "url_dispacher" => "sys",
-            // 跟踪错误来源
-            "trace_error" => 1,
 
             "components" => array(
                 "file_varcache" => array(
@@ -108,19 +118,11 @@ class Flow {
         self::$cfg = array_merge(self::$cfg, $config_default);
         // 加载所有配置文件
         self::$cfg = array_merge(self::$cfg, $config);
+        // 合并配置文件
+        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
+        // 合并ENV里面的配置
+        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
 
-        if (file_exists(APP_PATH . "/config/")) {
-            $config_files = scandir(APP_PATH . "/config/");
-            foreach ($config_files as $i => $config_file) {
-                $r = explode(".", $config_file);
-                $ext = $r[count($r) - 1];
-                if ($ext == "php" && file_exists(APP_PATH . "/config/" . $config_file)) {
-                    $config = include APP_PATH . "/config/" . $config_file;
-                    // 合并配置文件
-                    self::$cfg = array_merge(self::$cfg, $config);
-                }
-            }
-        }
         $components = self::$cfg["components"];
         foreach ($components as $name => $config) {
             self::App()->setComponent($name, $config);
@@ -175,7 +177,7 @@ class Flow {
 
     private function _runWeb() {
         // 加载url分析类 分析url
-        if (self::$cfg["url_dispacher"] != "sys") {
+        if (isset(self::$cfg["url_dispacher"])) {
             $dispatcher = new self::$cfg["url_dispacher"];
         } else {
             $dispatcher = new F_Web_Route();
