@@ -145,7 +145,7 @@ class Flow {
         $dispatcher->init();
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod(); // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/command/");
+        $ac_path = APP_PATH . strtolower("/commands/");
         if (file_exists($ac_path . "$action_name.class.php")) {
             include $ac_path . "$action_name.class.php";
         } else {
@@ -161,6 +161,7 @@ class Flow {
         }
         $action = new $action_name();
 
+        $method_name = "action" . $method_name;
         // 检测方法
         if (!method_exists($action, $method_name)) {
             $methods = get_class_methods($action);
@@ -184,7 +185,7 @@ class Flow {
         $method_name = $dispatcher->getMethod();
 
         // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/action/$action_name.class.php");
+        $ac_path = APP_PATH . strtolower("/actions/$action_name.class.php");
         if (file_exists($ac_path)) {
             include $ac_path;
         } else {
@@ -195,7 +196,7 @@ class Flow {
             throw new Exception("控制类{$action_name} 不存在");
         }
         $action = new $action_name();
-
+        $method_name = "action" . $method_name;
         // 检测方法
         if (!method_exists($action, $method_name)) {
             throw new Exception("Cli类{$action_name} 没有{$method_name} 方法");

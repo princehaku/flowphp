@@ -60,9 +60,9 @@ class F_View_SViewEngine {
             extract($view_data);
         }
 
-        $cache_dir = Flow::$cfg["appcache_dir"] . '/template/';
+        $cache_dir = Flow::$cfg["appcache_dir"] . '/templates/';
 
-        $tpl_dir = APP_PATH . "/template/";
+        $tpl_dir = APP_PATH . "/templates/";
 
         // 检测缓存文件夹是否存在
         if (!file_exists($cache_dir)) {
@@ -98,11 +98,13 @@ class F_View_SViewEngine {
         $c = $tagfilter->apply($c);
 
         // 存储编译后的到文件
-        if (file_put_contents($tpl_cachepath, $c)) {
-            Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
-            include_once ($tpl_cachepath);
-        } else {
-            throw new Exception("缓存文件创建失败" . $viewname);
+        if (strlen($c) > 0) {
+            if (file_put_contents($tpl_cachepath, $c)) {
+                Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
+                include_once ($tpl_cachepath);
+            } else {
+                throw new Exception("缓存文件创建失败" . $viewname);
+            }
         }
     }
 
