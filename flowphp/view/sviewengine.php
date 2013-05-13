@@ -60,7 +60,9 @@ class F_View_SViewEngine {
             extract($view_data);
         }
 
-        $cache_dir = Flow::$cfg["appcache_dir"] . '/templates/';
+        $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
+
+        $cache_dir = $appcache_dir . '/templates/';
 
         $tpl_dir = APP_PATH . "/templates/";
 
