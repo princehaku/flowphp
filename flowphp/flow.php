@@ -87,6 +87,9 @@ class Flow {
     public function init($config = array()) {
         $this->import("core.core.loader");
         spl_autoload_register("F_Core_Loader::autoLoadHandler");
+        if (!defined("DEV_MODE")) {
+            define("DEV_MODE", false);
+        }
         // 配置异常处理
         if (DEV_MODE) {
             ini_set("display_errors", 1);
