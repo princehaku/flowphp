@@ -8,7 +8,7 @@
  */
 class MainAction extends F_Core_Action {
 
-    public function actionIndex($request) {
+    public function actionIndex() {
         $this->assign("s", "bbb");
         $this->assign("arr",
             array("b", "wa")

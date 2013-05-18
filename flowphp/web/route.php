@@ -25,7 +25,8 @@ class F_Web_Route {
         $action = 'Main';
         $method = 'index';
 
-        $url = $_SERVER['REQUEST_URI'];
+        $url = str_replace(dirname($_SERVER["SCRIPT_NAME"]), "", $_SERVER['REQUEST_URI']);
+
         $url_parsed = parse_url($url);
 
         if (!empty($_GET['action'])) {
