@@ -25,7 +25,12 @@ class F_Core_App {
     public function setComponent($name, $config) {
         $this->comp_config[$name] = $config;
     }
-
+    /**
+     * 获取一个组件
+     * @param $name
+     * @return mixed
+     * @throws Exception
+     */
     public function getComponent($name) {
         if (empty($this->comp_config[$name])) {
             throw new Exception("组件{$name}不存在");
@@ -38,7 +43,15 @@ class F_Core_App {
             return $this->comp_config[$name];
         }
     }
-
+    /**
+     * 依据配置文件数组创建一个类
+     * array('class'=>'xxxxx','import'=>'lib.go', 'a'=>'b')
+     * 其他将被注入到参数中
+     *
+     * @param $config
+     * @return mixed
+     * @throws Exception
+     */
     public function createComponent($config) {
         if (!is_array($config)) {
             return $config;
@@ -52,14 +65,26 @@ class F_Core_App {
         $class_name = $config['class'];
         $comp = new $class_name();
         unset($config['class']);
+        unset($config['import']);
         foreach ($config as $key => $val) {
             $comp->$key = $this->createComponent($val);
         }
         $comp->init();
         return $comp;
     }
-
+    /**
+     * @param $name
+     * @return mixed
+     * @see $name
+     */
     public function __get($name) {
         return $this->getComponent($name);
+    }
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function __isset($name) {
+        return isset($this->comp_config[$name]);
     }
 }

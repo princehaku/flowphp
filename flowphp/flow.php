@@ -147,6 +147,7 @@ class Flow {
     }
 
     private function _runCli() {
+        $this->App()->request = new F_Cli_Request();
         $dispatcher = new F_Cli_Route();
         $dispatcher->init();
         $action_name = $dispatcher->getAction();
@@ -173,13 +174,13 @@ class Flow {
             $methods = get_class_methods($action);
             throw new Exception("{$action_name} 没有{$method_name} 方法\n支持的命令有" . implode("\n", $methods));
         }
-        $request = new F_Cli_Request();
-        $action->request = $request;
+        $action->request = $this->App()->request;
         // 执行方法
         $action->$method_name();
     }
 
     private function _runWeb() {
+        $this->App()->request = new F_Web_Request();
         // 加载url分析类 分析url
         if (isset(self::$cfg["url_dispacher"])) {
             $dispatcher = new self::$cfg["url_dispacher"];
@@ -209,7 +210,7 @@ class Flow {
         }
         // 初始化action的一些组件
         $action->setViewEngine(new F_View_SViewEngine());
-        $request = new F_Web_Request();
+        $request = $this->App()->request;
         $action->request = $request;
         // 执行方法
         $action->$method_name();
