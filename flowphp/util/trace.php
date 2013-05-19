@@ -7,9 +7,9 @@
  */
 
 /**
- * Class F_Comp_Trace
+ * Class F_Util_Trace
  */
-class F_Comp_Trace {
+class F_Util_Trace {
 
     public $enable = true;
 
