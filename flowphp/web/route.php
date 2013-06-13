@@ -25,29 +25,22 @@ class F_Web_Route {
         $action = 'Main';
         $method = 'index';
 
-        $url = str_replace(dirname($_SERVER["SCRIPT_NAME"]), "", $_SERVER['REQUEST_URI']);
-
+        $url = $_SERVER['REQUEST_URI'];
         $url_parsed = parse_url($url);
 
         if (!empty($_GET['action'])) {
             $action = $_GET['action'];
-            $url = '';
         }
         if (!empty($_GET['method'])) {
             $method = $_GET['method'];
-            $url = '';
         }
-        $url = str_replace(APP_PATH, "", $url);
-        // 拆开?
-        $url = explode("?", $url);
 
-        $url = $url[0];
         // 按斜杠分拆
-        $params = explode("/", $url_parsed['path']);
+        $params = explode("/", trim($url_parsed['path'], "/"));
 
         if (!empty($params[0])) {
             $action = explode(".", $params[0]);
-            $method = $action[0];
+            $action = $action[0];
         }
         if (!empty($params[1])) {
             $method = explode(".", $params[1]);
@@ -65,14 +58,6 @@ class F_Web_Route {
         $this->action = $action;
 
         $this->method = $method;
-    }
-
-    private function _routeCli() {
-        // 拆开
-        $this->action = $_SERVER['argv'][1];
-
-        $this->method = $_SERVER['argv'][2];
-
     }
 
     public function init() {
