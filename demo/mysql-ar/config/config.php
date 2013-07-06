@@ -9,7 +9,7 @@
  */
 
 return array(
-    'base_url' => '',
+    'base_url' => '/mysql-ar',
     "import" => array(
         "module.*",
     ),
