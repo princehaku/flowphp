@@ -14,4 +14,4 @@ define("FLOW_PATH", dirname(dirname(dirname(__FILE__))) . "/flowphp/");
 include FLOW_PATH . "flow.php";
 
 $flow = new Flow();
-$flow->run();
+$flow->run('cli');

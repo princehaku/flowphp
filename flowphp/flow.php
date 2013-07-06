@@ -10,14 +10,17 @@
 class Flow {
 
     public static $cfg = array();
+
     /**
      * @var F_Core_Log
      */
     private static $_log;
+
     /**
      * @var F_Core_App
      */
     private static $_app;
+
     /**
      * 日志
      * 单例模式
@@ -30,6 +33,7 @@ class Flow {
         }
         return Flow::$_log;
     }
+
     /**
      * APP组件
      * 单例模式
@@ -81,7 +85,7 @@ class Flow {
         return $cfg;
     }
 
-    protected $config = array(
+    protected $base_config = array(
 
         "components" => array(
             "file_varcache" => array(
@@ -90,6 +94,7 @@ class Flow {
 
         )
     );
+
     /**
      * 应用初始化
      * @throws Exception
@@ -135,13 +140,14 @@ class Flow {
             self::App()->setComponent($name, $config);
         }
     }
+
     /**
      * 执行
      */
-    public function run() {
+    public function run($run_mode = 'web') {
         // 初始化各种东西
         $this->init();
-        if (PHP_SAPI === "cli") {
+        if ($run_mode === "cli") {
             $this->_runCli();
         } else {
             $this->_runWeb();
