@@ -8,10 +8,9 @@
 
 /**
  * 默认控制器类
- *
+ * F_Web_Action
  */
-
-class F_Core_Action {
+class F_Web_Action {
     /**
      * @var F_Web_Request
      */

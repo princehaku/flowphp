@@ -49,7 +49,7 @@ class F_Core_Log {
                 if (strpos(str_replace("\\", "/", $j['file']),
                     str_replace("\\", "/", $flow_path)) !== false
                 ) {
-                    continue;
+                    //continue;
                 }
                 $this->msg[$this->recordNums++] = array(
                     'type' => "trace",

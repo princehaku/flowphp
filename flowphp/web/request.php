@@ -12,7 +12,7 @@ class F_Web_Request {
 
     private $params;
 
-    function __construct() {
+    public function init() {
 
         $this->params = $_GET;
 

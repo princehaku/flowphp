@@ -10,9 +10,9 @@
 
 /**
  * 命令行模式基本控制器
- * Class F_Core_Command
+ * Class F_Cli_Command
  */
-class F_Core_Command {
+class F_Cli_Command {
     /**
      * @var F_Cli_Request
      */

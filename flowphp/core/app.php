@@ -16,6 +16,7 @@
  * Class F_Core_App
  */
 class F_Core_App {
+
     /**
      * 组件的配置
      * @var array
@@ -25,6 +26,7 @@ class F_Core_App {
     public function setComponent($name, $config) {
         $this->comp_config[$name] = $config;
     }
+
     /**
      * 获取一个组件
      * @param $name
@@ -43,6 +45,7 @@ class F_Core_App {
             return $this->comp_config[$name];
         }
     }
+
     /**
      * 依据配置文件数组创建一个类
      * array('class'=>'xxxxx','import'=>'lib.go', 'a'=>'b')
@@ -74,6 +77,7 @@ class F_Core_App {
         $comp->init();
         return $comp;
     }
+
     /**
      * @param $name
      * @return mixed
@@ -82,6 +86,7 @@ class F_Core_App {
     public function __get($name) {
         return $this->getComponent($name);
     }
+
     /**
      * @param $name
      * @return bool

@@ -42,7 +42,7 @@ class Flow {
      */
     public static function App() {
         if (Flow::$_app == null) {
-            //初始化日志类
+            //初始化基础APP
             Flow::$_app = new F_Core_App();
         }
         return Flow::$_app;
@@ -50,7 +50,7 @@ class Flow {
 
     public static function import($path) {
         $path_arr = explode(".", $path);
-        if ($path_arr[0] == "core") {
+        if ($path_arr[0] == "system") {
             unset($path_arr[0]);
             $sys_path = implode("/", $path_arr);
             $sys_path = FLOW_PATH . "/" . $sys_path . ".php";
@@ -85,13 +85,15 @@ class Flow {
         return $cfg;
     }
 
-    protected $base_config = array(
-
-        "components" => array(
-            "file_varcache" => array(
-                "class" => "F_Cache_File"
-            )
-
+    protected $system_components = array(
+        'class_loader' => array(
+            "class" => "F_Core_Loader"
+        ),
+        'web_app' => array(
+            'class' => 'F_Web_Application'
+        ),
+        'console_app' => array(
+            'class' => 'F_Cli_Application'
         )
     );
 
@@ -100,41 +102,25 @@ class Flow {
      * @throws Exception
      */
     public function init($config = array()) {
-        $this->import("core.core.loader");
-        spl_autoload_register("F_Core_Loader::autoLoadHandler");
         if (!defined("DEV_MODE")) {
             define("DEV_MODE", false);
-        }
-        // 配置异常处理
-        if (DEV_MODE) {
-            ini_set("display_errors", 1);
-            error_reporting(E_ALL);
-            set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
-            set_error_handler("F_Core_ErrorHandler::errorHandler");
-            register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
-        } else {
-            error_reporting(0);
-            ini_set("display_errors", 0);
-        }
-        // 定义路径
+        };
+        // 定义路径检测
         if (!defined("APP_PATH") || !defined("DEV_MODE") || !defined("FLOW_PATH")) {
             throw new Exception("No APP_PATH or DEV_MODE or FLOW_PATH Defined");
         }
 
-        session_start();
+        $this->import("system.core.app");
+        $this->import("system.core.loader");
+        // 加载所有配置文件
+        $this->_loadcfg($config);
         // 系统默认配置
-        $config_default = $this->base_config;
-        // 加载所有配置文件
-        self::$cfg = array_merge(self::$cfg, $config_default);
-        // 加载所有配置文件
-        self::$cfg = array_merge(self::$cfg, $config);
-        // 合并配置文件
-        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
-        // 合并ENV里面的配置
-        if (defined("ENV")) {
-            self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
+        foreach ($this->system_components as $name => $config) {
+            self::App()->setComponent($name, $config);
         }
-
+        // 初始化class_loader
+        $this->App()->class_loader->registerAutoLoader();
+        // 初始化所有组件
         $components = self::$cfg["components"];
         foreach ($components as $name => $config) {
             self::App()->setComponent($name, $config);
@@ -142,89 +128,34 @@ class Flow {
     }
 
     /**
+     * 读取和合并配置文件里面的内容
+     * @param array $config
+     */
+    private function _loadcfg($config = array()) {
+        // 加载所有配置文件
+        self::$cfg = $config;
+        // 合并配置文件
+        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
+        // 合并ENV里面的配置
+        if (defined("ENV")) {
+            self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
+        }
+    }
+    /**
      * 执行
      */
     public function run($run_mode = 'web') {
         // 初始化各种东西
         $this->init();
         if ($run_mode === "cli") {
-            $this->_runCli();
+            $this->App()->console_app->run();
         } else {
-            $this->_runWeb();
+            $this->App()->web_app->run();
         }
     }
 
-    private function _runCli() {
-        $this->App()->request = new F_Cli_Request();
-        $dispatcher = new F_Cli_Route();
-        $dispatcher->init();
-        $action_name = $dispatcher->getAction();
-        $method_name = $dispatcher->getMethod(); // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/commands/");
-        if (file_exists($ac_path . "$action_name.class.php")) {
-            include $ac_path . "$action_name.class.php";
-        } else {
-            $files = array_diff(scandir($ac_path), array(".", ".."));
-            array_walk($files, function (&$val) {
-                $val = str_replace(".class.php", "", $val);
-            });
-            throw new Exception("命令不存在$ac_path\n支持的命令有" . implode("\n", $files));
-        }
-        $action_name = $action_name . "Command";
-        if (!class_exists($action_name)) {
-            throw new Exception("{$action_name} 不存在");
-        }
-        $action = new $action_name();
 
-        $method_name = "action" . $method_name;
-        // 检测方法
-        if (!method_exists($action, $method_name)) {
-            $methods = get_class_methods($action);
-            throw new Exception("{$action_name} 没有{$method_name} 方法\n支持的命令有" . implode("\n", $methods));
-        }
-        $action->request = $this->App()->request;
-        // 执行方法
-        $action->$method_name();
-    }
-
-    private function _runWeb() {
-        $this->App()->request = new F_Web_Request();
-        // 加载url分析类 分析url
-        if (isset(self::$cfg["url_dispacher"])) {
-            $dispatcher = new self::$cfg["url_dispacher"];
-        } else {
-            $dispatcher = new F_Web_Route();
-        }
-        $dispatcher->init();
-        $action_name = $dispatcher->getAction();
-        $method_name = $dispatcher->getMethod();
-
-        // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/actions/$action_name.class.php");
-        if (file_exists($ac_path)) {
-            include $ac_path;
-        } else {
-            throw new Exception("控制文件不存在$ac_path");
-        }
-        $action_name = $action_name . "Action";
-        if (!class_exists($action_name)) {
-            throw new Exception("控制类{$action_name} 不存在");
-        }
-        $action = new $action_name();
-        $method_name = "action" . $method_name;
-        // 检测方法
-        if (!method_exists($action, $method_name)) {
-            throw new Exception("控制类{$action_name} 没有{$method_name} 方法");
-        }
-        // 初始化action的一些组件
-        $action->setViewEngine(new F_View_SViewEngine());
-        $request = $this->App()->request;
-        $action->request = $request;
-        // 执行方法
-        $action->$method_name();
-    }
-
-    /*
+    /**
      * 打印页面日志并结束脚本
      *
      */

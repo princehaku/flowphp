@@ -7,7 +7,7 @@
  *  Author     : haku
  *  Blog       : http://3haku.net
  */
-class GoCommand extends F_Core_Command {
+class GoCommand extends F_Cli_Command {
 
     public function actionFetch() {
        echo $this->request->opt('url');

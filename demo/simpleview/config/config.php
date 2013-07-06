@@ -12,5 +12,8 @@ return array(
     "import" => array(
     ),
     "components" => array(
+        'abc' => array(
+            'a123'
+        )
     )
 );
