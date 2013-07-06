@@ -60,7 +60,9 @@ class F_Core_App {
             throw new Exception("组件config必须有class");
         }
         if (!empty($config['import'])) {
-            Flow::import($config['import']);
+            foreach($config['import'] as $imt) {
+                Flow::import($imt);
+            }
         }
         $class_name = $config['class'];
         $comp = new $class_name();

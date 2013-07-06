@@ -80,6 +80,16 @@ class Flow {
         }
         return $cfg;
     }
+
+    protected $config = array(
+
+        "components" => array(
+            "file_varcache" => array(
+                "class" => "F_Cache_File"
+            )
+
+        )
+    );
     /**
      * 应用初始化
      * @throws Exception
@@ -108,15 +118,7 @@ class Flow {
 
         session_start();
         // 系统默认配置
-        $config_default = array(
-
-            "components" => array(
-                "file_varcache" => array(
-                    "class" => "F_Cache_File"
-                )
-
-            )
-        );
+        $config_default = $this->base_config;
         // 加载所有配置文件
         self::$cfg = array_merge(self::$cfg, $config_default);
         // 加载所有配置文件
