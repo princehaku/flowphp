@@ -63,7 +63,7 @@ class F_View_BaseTags {
     public function apply($source) {
         // LIST标签替换
         $this->parseList($source);
-        // 替换全局{$}标签为单词
+        // 替换全局${$}标签为单词
         $this->parseToken($source);
         // 替换if标签对
         $this->parseIf($source);
@@ -71,7 +71,8 @@ class F_View_BaseTags {
         return $source;
     }
 
-    /** 解析<if con="xxxx">替换if标签
+    /**
+     * 解析<if con="xxxx">替换if标签
      *
      * @param mixed $source
      */
@@ -112,14 +113,14 @@ class F_View_BaseTags {
     }
 
     /**
-     * 解析{$xxx}标签为实体
+     * 解析${$xxx}标签为实体
      *
      * @param mixed $source
      */
     private function parseToken(&$source) {
         $matches = array();
         // 替换{$xxx}标签为实体
-        preg_match_all("/\\{(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
+        preg_match_all("/\\$\\{(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
             return false;
@@ -129,7 +130,7 @@ class F_View_BaseTags {
             $tagname = $j[1];
             $converted_token = $this->_tokenParser($tagname);
             $val = "<?php echo $converted_token; ?>";
-            $source = str_replace("{" . $tagname . "}", $val, $source);
+            $source = str_replace("\${" . $tagname . "}", $val, $source);
         }
 
         return true;
