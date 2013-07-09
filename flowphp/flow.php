@@ -11,6 +11,8 @@ class Flow {
 
     public static $cfg = array();
 
+    public static $params = array();
+
     /**
      * @var F_Core_Log
      */
