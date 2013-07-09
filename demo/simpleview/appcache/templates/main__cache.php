@@ -1,4 +1,10 @@
 <html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="author" content="princehaku"/>
+</head>
+
+<body>
 
 <?php if ($s==1) { ?>
     asdjasd
@@ -24,5 +30,5 @@
         <?php echo $e2_val; ?>
     <?php } ?>
 <?php } ?>
-
+</body>
 </html>

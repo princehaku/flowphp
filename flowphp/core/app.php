@@ -60,7 +60,7 @@ class F_Core_App {
             return $config;
         }
         if (empty($config['class'])) {
-            throw new Exception("组件config必须有class");
+            return $config;
         }
         if (!empty($config['import'])) {
             foreach($config['import'] as $imt) {

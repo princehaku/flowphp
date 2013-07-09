@@ -35,12 +35,11 @@ class F_Web_Route {
     private function _routeRequest() {
         $action = 'Main';
         $method = 'index';
-        $base_path = dirname($_SERVER["SCRIPT_NAME"]);
-        $url = $_SERVER['REQUEST_URI'];
-        if (strpos($url, $base_path) === 0) {
-            $url = substr($url, strlen($base_path));
+        $base_path = Flow::App()->basePath;
+        $uri = $_SERVER['REQUEST_URI'];
+        if (strpos($uri, $base_path) === 0) {
+            $uri = substr($uri, strlen($base_path));
         }
-
         // 如果有pattern 用pattern的匹配
         if (!empty($this->rewrite_rules)) {
             foreach ($this->rewrite_rules as $url_pattern => $dest) {
@@ -48,16 +47,12 @@ class F_Web_Route {
                 break;
             }
         }
-        $url_parsed = parse_url($url);
+        $uri_parsed = parse_url($uri);
 
-        $uri_path = str_replace(dirname($_SERVER["SCRIPT_NAME"]), "", $uri);
-        $uri_parsed = parse_url($uri_path);
         // 按斜杠分拆
-        $params = explode("/", trim(dirname($uri_parsed['path']), "/\\"));
+        $params = explode("/", trim($uri_parsed['path'], "/\\"));
 
         if (!empty($params[0])) {
-            $action = explode(".", $params[0]);
-            $action = $action[0];
             $action = $params[0];
             if (strpos($action, '.') !== false) {
                 $action = 'Main';

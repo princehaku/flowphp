@@ -11,7 +11,7 @@ class Flow {
 
     public static $cfg = array();
 
-    public static $params = array();
+    public static $classMap = array();
 
     /**
      * @var F_Core_Log
@@ -23,6 +23,9 @@ class Flow {
      */
     private static $_app;
 
+    private static $_imports = array();
+
+    private static $_pathAliases = array();
     /**
      * 日志
      * 单例模式
@@ -45,22 +48,64 @@ class Flow {
     public static function App() {
         if (Flow::$_app == null) {
             //初始化基础APP
-            Flow::$_app = new F_Core_App();
+            if (PHP_SAPI === "cli") {
+                Flow::$_app = new F_Cli_App();
+            } else {
+                Flow::$_app = new F_Web_App();
+            }
+            Flow::$_app->init();
         }
         return Flow::$_app;
     }
 
-    public static function import($path) {
-        $path_arr = explode(".", $path);
-        if ($path_arr[0] == "system") {
-            unset($path_arr[0]);
-            $sys_path = implode("/", $path_arr);
-            $sys_path = FLOW_PATH . "/" . $sys_path . ".php";
-        } else {
-            $sys_path = implode("/", $path_arr);
-            $sys_path = APP_PATH . "/" . $sys_path . ".php";
+    public static function getPathOfAlias($alias) {
+        if (isset(self::$_pathAliases[$alias]))
+            return self::$_pathAliases[$alias];
+        return false;
+    }
+
+    public static function setPathOfAlias($alias, $path) {
+        if (empty($path))
+            unset(self::$_pathAliases[$alias]);
+        else
+            self::$_pathAliases[$alias] = rtrim($path, '\\/');
+    }
+
+
+    public static function import($path, $include_now = false) {
+        if (isset(self::$_imports[$path])) {
+            return self::$_imports[$path];
         }
-        include $sys_path;
+        $path_arr = explode(".", $path);
+        $alias_arr = explode('.', $path);
+        $base = self::getPathOfAlias($alias_arr[0]);
+        unset($alias_arr[0]);
+        $end_seg = $alias_arr[count($alias_arr)];
+        unset($alias_arr[count($alias_arr)]);
+        $dir_import = $base . '/' . implode('/', $alias_arr) . '/';
+
+        if ($end_seg != '*') {
+            self::$_imports[$path] = $dir_import . $end_seg . '.php';
+            self::$classMap[$end_seg] = self::$_imports[$path];
+        } else {
+            // 扫描目录
+            if (!file_exists($dir_import)) {
+                return;
+            }
+            $file_arr = scandir($dir_import);
+            foreach ($file_arr as $file_arr) {
+                $path_info = (pathinfo($file_arr));
+                if (!empty($path_info["filename"]) && $path_info["filename"] != '.'
+                    && $path_info["filename"] != '..'
+                ) {
+                    self::$_imports[$path] = $dir_import . $path_info["basename"];
+                    self::$classMap[$path_info["filename"]] = self::$_imports[$path];
+                }
+            }
+        }
+        if ($include_now) {
+            include self::$_imports[$path];
+        }
 
         return $path_arr[count($path_arr) - 1];
     }
@@ -80,24 +125,12 @@ class Flow {
                 if ($ext == "php" && file_exists($cfg_dir . $config_file)) {
                     $config = include $cfg_dir . $config_file;
                     // 合并配置文件
-                    $cfg = array_merge($cfg, $config);
+                    $cfg = F_Helper_Array::MergeArray($cfg, $config);
                 }
             }
         }
         return $cfg;
     }
-
-    protected $system_components = array(
-        'class_loader' => array(
-            "class" => "F_Core_Loader"
-        ),
-        'web_app' => array(
-            'class' => 'F_Web_Application'
-        ),
-        'console_app' => array(
-            'class' => 'F_Cli_Application'
-        )
-    );
 
     /**
      * 应用初始化
@@ -112,16 +145,13 @@ class Flow {
             throw new Exception("No APP_PATH or DEV_MODE or FLOW_PATH Defined");
         }
 
-        $this->import("system.core.app");
-        $this->import("system.core.loader");
+        $this->import("system.core.loader", true);
+        $this->import("system.helper.array", true);
+        // 初始化class_loader
+        $class_loader = new F_Core_Loader();
+        $class_loader->registerAutoLoader();
         // 加载所有配置文件
         $this->_loadcfg($config);
-        // 系统默认配置
-        foreach ($this->system_components as $name => $config) {
-            self::App()->setComponent($name, $config);
-        }
-        // 初始化class_loader
-        $this->App()->class_loader->registerAutoLoader();
         // 初始化所有组件
         $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {
@@ -143,17 +173,14 @@ class Flow {
             self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
         }
     }
+
     /**
      * 执行
      */
-    public function run($run_mode = 'web') {
+    public function run() {
         // 初始化各种东西
         $this->init();
-        if ($run_mode === "cli") {
-            $this->App()->console_app->run();
-        } else {
-            $this->App()->web_app->run();
-        }
+        $this->App()->run();
     }
 
 

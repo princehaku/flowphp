@@ -2,12 +2,14 @@
 /**
  * Copyright 2013 princehaku
  *
- *  FileName   : application.php
+ *  FileName   : app.php
  *  Created on : 13-7-6 , 下午5:43
  *  Author     : haku
  *  Blog       : http://3haku.net
  */
-class F_Web_Application {
+class F_Web_App extends F_Core_App {
+
+    public $basePath = '';
 
     protected $base_cfg = array(
         "components" => array(
@@ -21,14 +23,15 @@ class F_Web_Application {
     );
 
     public function init() {
-        $components = array_merge(Flow::$cfg, $this->base_cfg);
+        $this->basePath = dirname($_SERVER["SCRIPT_NAME"]);
+        $components = F_Helper_Array::MergeArray($this->base_cfg, Flow::$cfg);
         // 初始化所有组件
-        Flow::App()->setComponent('request', $components["components"]['request']);
-        Flow::App()->setComponent('url_router', $components["components"]['url_router']);
+        $this->setComponent('request', $components["components"]['request']);
+        $this->setComponent('url_router', $components["components"]['url_router']);
     }
 
     public function run() {
-        $dispatcher = Flow::App()->url_router;
+        $dispatcher = Flow::App()->getComponent('url_router');
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod();
         // 加载对应的控制类

@@ -15,7 +15,7 @@ return array(
         "url_router" => array(
             "class" => "F_Web_Route",
             'rewrite_rules'=>array(
-                'index.php?rewrite/index' => 'rewrite/index',
+                '/test\/b/' => 'rewrite/index',
             )
         )
     )

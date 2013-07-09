@@ -32,6 +32,9 @@ class F_Core_Loader {
             }
             include $file_path;
         }
+        if (isset(Flow::$classMap[$class_name])) {
+            include Flow::$classMap[$class_name];
+        }
     }
 
     public function registerAutoLoader() {
