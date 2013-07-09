@@ -16,7 +16,7 @@ class F_Cli_Request {
 
     protected $params;
 
-    function __construct() {
+    function init() {
         $argv = $_SERVER['argv'];
         foreach ($argv as $arg) {
             // 先按照=拆分

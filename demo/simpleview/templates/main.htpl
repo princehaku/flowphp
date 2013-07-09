@@ -1,4 +1,10 @@
 <html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="author" content="princehaku"/>
+</head>
+
+<body>
 
 <if con="$s==1">
     asdjasd
@@ -24,5 +30,5 @@
         ${$e2_val}
     </list>
 </list>
-
+</body>
 </html>

@@ -19,6 +19,10 @@ class F_Cli_Route {
 
     protected $method;
 
+    public function init() {
+        $this->_routeCli();
+    }
+
     public function getAction() {
         return $this->action;
     }
@@ -32,10 +36,6 @@ class F_Cli_Route {
         $this->action = $_SERVER['argv'][1];
 
         $this->method = $_SERVER['argv'][2];
-    }
-
-    public function init() {
-        $this->_routeCli();
     }
 
 }

@@ -9,7 +9,7 @@
  */
 
 return array(
-    'base_url' => '/mysql-ar',
+    'base_url' => '/mysql_activerecord',
     "import" => array(
         "module.*",
     ),

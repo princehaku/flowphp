@@ -13,7 +13,7 @@ class F_Cache_File implements ArrayAccess {
     private $_cachedValues = array();
     private $_baseDir;
 
-    public function F_Cache_File() {
+    public function init() {
         $this->_baseDir = $_SERVER['TMP'];
     }
 
