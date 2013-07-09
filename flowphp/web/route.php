@@ -25,7 +25,12 @@ class F_Web_Route {
         $action = 'Main';
         $method = 'index';
 
-        $url = str_replace(dirname($_SERVER["SCRIPT_NAME"]), "", $_SERVER['REQUEST_URI']);
+        $base_path = dirname($_SERVER["SCRIPT_NAME"]);
+        $url = $_SERVER['REQUEST_URI'];
+        if (strpos($_SERVER['REQUEST_URI'], $base_path) === 0) {
+            $url = substr($_SERVER['REQUEST_URI'], count($_SERVER['REQUEST_URI']));
+        }
+
         $url_parsed = parse_url($url);
 
         if (!empty($_GET['action'])) {
@@ -39,12 +44,18 @@ class F_Web_Route {
         $params = explode("/", trim($url_parsed['path'], "/"));
 
         if (!empty($params[0])) {
-            $action = explode(".", $params[0]);
-            $action = $action[0];
+            if (strpos($params[0], '.') !== false) {
+                $seg = explode('.', $params[0]);
+                $params[0] = $seg[0];
+            }
+            $action = $params[0];
         }
         if (!empty($params[1])) {
-            $method = explode(".", $params[1]);
-            $method = $method[0];
+            if (strpos($params[1], '.') !== false) {
+                $seg = explode('.', $params[1]);
+                $params[1] = $seg[0];
+            }
+            $method = $params[1];
         }
         // 设置到请求里面
         foreach ($params as $i => $j) {
