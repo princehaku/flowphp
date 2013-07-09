@@ -11,6 +11,7 @@
  * F_Web_Action
  */
 class F_Web_Action {
+
     /**
      * @var F_Web_Request
      */
@@ -30,7 +31,7 @@ class F_Web_Action {
             $view_name = strtolower(get_called_class());
             $view_name = str_replace("action", "", $view_name);
         }
-        //调用父类
+        //调用模板引擎
         $this->_view->display($view_name, $view_data);
     }
 

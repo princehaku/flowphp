@@ -121,7 +121,7 @@ class Flow {
         // 初始化class_loader
         $this->App()->class_loader->registerAutoLoader();
         // 初始化所有组件
-        $components = self::$cfg["components"];
+        $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {
             self::App()->setComponent($name, $config);
         }

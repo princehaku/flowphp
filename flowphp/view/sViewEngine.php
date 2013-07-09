@@ -8,7 +8,8 @@
  */
 
 class F_View_SViewEngine {
-    /** 资源列表
+    /**
+     * 资源列表
      *
      */
     private $_resource;
@@ -24,7 +25,8 @@ class F_View_SViewEngine {
         return $res;
     }
 
-    /** 得到应该输出的结果串
+    /**
+     * 得到应该输出的结果串
      *
      * @param unknown_type $viewname
      * @return string
@@ -43,7 +45,8 @@ class F_View_SViewEngine {
         return $content;
     }
 
-    /** 打印输出
+    /**
+     * 打印输出
      *
      * @param $viewname
      */
@@ -73,7 +76,7 @@ class F_View_SViewEngine {
             }
         }
         // 模板文件
-        $tplfile = $tpl_dir . $viewname . '.htpl';
+        $tplfile = $tpl_dir . $viewname . '.php';
 
         $tpl_path = $tplfile;
         // 缓存文件处理
