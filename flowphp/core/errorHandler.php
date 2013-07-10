@@ -10,7 +10,7 @@
  *
  */
 class F_Core_ErrorHandler {
-    /*
+    /**
      * 打印页面日志并结束脚本
      *
      */
@@ -29,6 +29,10 @@ class F_Core_ErrorHandler {
      *
      */
     public static function fatalShutdownHandler() {
+
+        restore_error_handler();
+        restore_exception_handler();
+
         if (null != ($error = error_get_last())) {
             switch ($error['type']) {
                 case E_ERROR :
@@ -46,6 +50,10 @@ class F_Core_ErrorHandler {
      * 负责分发错误到日志记录
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline) {
+
+        restore_error_handler();
+        restore_exception_handler();
+
         switch ($errno) {
             case E_NOTICE :
             case E_USER_NOTICE :
