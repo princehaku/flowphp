@@ -9,13 +9,13 @@ class F_Util_HttpFetch {
     /** Curl handler
      *
      */
-    private $curl;
+    protected $curl;
     /** cookie字符串
      */
-    private $cookie;
+    protected $cookie;
     /** 源(用于最后结果调试)
      */
-    private $sourceStack = array();
+    protected $sourceStack = array();
 
     /** 得到源html栈
      */
@@ -26,11 +26,12 @@ class F_Util_HttpFetch {
 
     /**
      * get方式下载网页内容
+     *
      * @param $url
-     * @return web conntent
+     * @param int $timeout
+     * @return mixed
      */
-
-    public function get($url, $timeout = 1) {
+    public function get($url, $timeout = 1, $using_ms = false) {
 
         $this->curl = curl_init();
 
@@ -39,8 +40,13 @@ class F_Util_HttpFetch {
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         curl_setopt($this->curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
         curl_setopt($this->curl, CURLOPT_COOKIE, $this->cookie);
-        // 设置超时
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+        if ($using_ms == false) {
+            // 设置超时
+            curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+        } else {
+            // 设置超时
+            curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $timeout);
+        }
 
         // 设置cURL 参数，要求结果保存到字符串中还是输出到屏幕上。
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
@@ -67,12 +73,13 @@ class F_Util_HttpFetch {
 
     /**
      * POST方式下载网页内容
+     *
      * @param $url
      * @param $params post的信息串
      * @return web conntent
      */
 
-    public function post($url, $params, $timeout = 1) {
+    public function post($url, $params, $timeout = 1, $using_ms = false) {
 
         $this->curl = curl_init();
 
@@ -84,8 +91,13 @@ class F_Util_HttpFetch {
         curl_setopt($this->curl, CURLOPT_POST, 1);
         curl_setopt($this->curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $params);
-        // 设置超时
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+        if ($using_ms == false) {
+            // 设置超时
+            curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+        } else {
+            // 设置超时
+            curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $timeout);
+        }
 
         // 设置cURL 参数，要求结果保存到字符串中还是输出到屏幕上。
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);

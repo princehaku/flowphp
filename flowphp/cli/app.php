@@ -10,7 +10,7 @@
 
 class F_Cli_App extends F_Core_App {
 
-    protected $base_cfg = array(
+    protected $base_components = array(
         "components" => array(
             "request" => array(
                 "class" => 'F_Cli_Request'
@@ -22,7 +22,7 @@ class F_Cli_App extends F_Core_App {
     );
 
     public function init() {
-        $components = F_Helper_Array::MergeArray($this->base_cfg, Flow::$cfg);
+        $components = F_Helper_Array::MergeArray($this->base_components, Flow::$cfg);
         // 初始化所有组件
         $this->setComponent('request', $components["components"]['request']);
         $this->setComponent('url_router', $components["components"]['url_router']);

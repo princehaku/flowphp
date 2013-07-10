@@ -21,10 +21,10 @@ class F_Core_App {
      * 组件的配置
      * @var array
      */
-    private $comp_config = array();
+    private $_compConfig = array();
 
     public function setComponent($name, $config) {
-        $this->comp_config[$name] = $config;
+        $this->_compConfig[$name] = $config;
     }
 
     /**
@@ -34,15 +34,15 @@ class F_Core_App {
      * @throws Exception
      */
     public function getComponent($name) {
-        if (empty($this->comp_config[$name])) {
+        if (empty($this->_compConfig[$name])) {
             throw new Exception("组件{$name}不存在");
         }
-        if (is_object($this->comp_config[$name])) {
-            return $this->comp_config[$name];
+        if (is_object($this->_compConfig[$name])) {
+            return $this->_compConfig[$name];
         }
-        if (is_array($this->comp_config[$name])) {
-            $this->comp_config[$name] = $this->createComponent($this->comp_config[$name]);
-            return $this->comp_config[$name];
+        if (is_array($this->_compConfig[$name])) {
+            $this->_compConfig[$name] = $this->createComponent($this->_compConfig[$name]);
+            return $this->_compConfig[$name];
         }
     }
 
@@ -92,6 +92,6 @@ class F_Core_App {
      * @return bool
      */
     public function __isset($name) {
-        return isset($this->comp_config[$name]);
+        return isset($this->_compConfig[$name]);
     }
 }

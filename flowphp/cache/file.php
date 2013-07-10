@@ -21,7 +21,7 @@ class F_Cache_File implements ArrayAccess {
         $this->_baseDir = $base_dir;
     }
 
-    public function put($key, $value) {
+    public function put($key, $value, $expires = -1) {
         $key = str_replace(".", "/", $key);
         $dir = dirname($this->_baseDir . "/" . $key . ".php");
         if (!file_exists($dir)) {
@@ -43,6 +43,13 @@ class F_Cache_File implements ArrayAccess {
         return $value;
     }
 
+    public function __get($key) {
+        return $this->get($key);
+    }
+
+    public function __set($key, $val) {
+        $this->put($key, $val);
+    }
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Whether a offset exists

@@ -76,7 +76,6 @@ class Flow {
         if (isset(self::$_imports[$path])) {
             return self::$_imports[$path];
         }
-        $path_arr = explode(".", $path);
         $alias_arr = explode('.', $path);
         $base = self::getPathOfAlias($alias_arr[0]);
         unset($alias_arr[0]);
@@ -106,8 +105,6 @@ class Flow {
         if ($include_now) {
             include self::$_imports[$path];
         }
-
-        return $path_arr[count($path_arr) - 1];
     }
 
     /**
@@ -141,10 +138,10 @@ class Flow {
             define("DEV_MODE", false);
         };
         // 定义路径检测
-        if (!defined("APP_PATH") || !defined("DEV_MODE") || !defined("FLOW_PATH")) {
-            throw new Exception("No APP_PATH or DEV_MODE or FLOW_PATH Defined");
+        if (!defined("APP_PATH") || !defined("FLOW_PATH")) {
+            throw new Exception("No APP_PATH or FLOW_PATH Defined");
         }
-
+        $this->setPathOfAlias('system', FLOW_PATH);
         $this->import("system.core.loader", true);
         $this->import("system.helper.array", true);
         // 初始化class_loader

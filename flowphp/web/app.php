@@ -11,7 +11,7 @@ class F_Web_App extends F_Core_App {
 
     public $basePath = '';
 
-    protected $base_cfg = array(
+    protected $baseComponents = array(
         "components" => array(
             "request" => array(
                 "class" => 'F_Web_Request'
@@ -24,7 +24,7 @@ class F_Web_App extends F_Core_App {
 
     public function init() {
         $this->basePath = dirname($_SERVER["SCRIPT_NAME"]);
-        $components = F_Helper_Array::MergeArray($this->base_cfg, Flow::$cfg);
+        $components = F_Helper_Array::MergeArray($this->baseComponents, Flow::$cfg);
         // 初始化所有组件
         $this->setComponent('request', $components["components"]['request']);
         $this->setComponent('url_router', $components["components"]['url_router']);

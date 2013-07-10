@@ -10,13 +10,35 @@
  */
 class F_Web_Request {
 
-    private $params;
+    private $_params;
+
+    /**
+     * 安全过滤后的参数们
+     * @var
+     */
+    private $_safeParams;
+
+    /**
+     * 安全的Uri
+     *
+     * @var
+     */
+    private $_safeUri;
+
+    /**
+     * 安全的Url
+     *
+     * @var
+     */
+    private $_safeUrl;
 
     public function init() {
 
-        $this->params = $_GET;
+        $this->_params = $_GET;
 
-        $this->params = array_merge($_POST, $this->params);
+        $this->_params = array_merge($_POST, $this->_params);
+
+        $this->_safeParams = F_Helper_Array::htmlspecialchars($this->_params);
 
         if (isset(Flow::$cfg['unset_reqs']) && Flow::$cfg['unset_reqs']) {
             unset($_GET);
@@ -33,10 +55,10 @@ class F_Web_Request {
      * @see strip
      */
     public function getText($param, $nullvalue = null) {
-        if (!isset($this->params[$param])) {
+        if (!isset($this->_params[$param])) {
             return $nullvalue;
         }
-        $s = $this->params[$param];
+        $s = $this->_safeParams[$param];
         return $s;
     }
 
@@ -45,10 +67,10 @@ class F_Web_Request {
      * 会过滤掉一些危险的html的标记
      */
     public function getSafeHtml($param, $nullvalue = null) {
-        if (!isset($this->params[$param])) {
+        if (!isset($this->_params[$param])) {
             return $nullvalue;
         }
-        $s = $this->params[$param];
+        $s = $this->_params[$param];
         $s = preg_replace(array(
             '/<(\/?)(script|i?frame|style|html|body|title|link|meta|\?|\%)([^>]*?)>/isU', "/(<[^>]*)on[a-zA-Z] \s*=([^>]*>)/isU"
         ), "", $s);
@@ -60,10 +82,10 @@ class F_Web_Request {
      * 注意和限制和机器有关32位和64位MAX_INT_NUM不一样
      */
     public function getInt($param, $nullvalue = null) {
-        if (!isset($this->params[$param])) {
+        if (!isset($this->_params[$param])) {
             return $nullvalue;
         }
-        return intval($this->params[$param]);
+        return intval($this->_params[$param]);
     }
 
     /**
@@ -71,10 +93,10 @@ class F_Web_Request {
      *
      */
     public function getFloat($param, $nullvalue = null) {
-        if (!isset($this->params[$param])) {
+        if (!isset($this->_params[$param])) {
             return $nullvalue;
         }
-        return (float)$this->params[$param];
+        return (float)$this->_params[$param];
     }
 
     /**
@@ -83,15 +105,38 @@ class F_Web_Request {
      *
      */
     public function getBaseUri() {
-
+        if ($this->_safeUri == null) {
+            $ps = strpos($_SERVER['REQUEST_URI'], '?');
+            if ($ps === false) {
+                $path = $ps;
+            } else {
+                $path = substr($_SERVER['REQUEST_URI'], 0, $ps);
+            }
+            $this->_safeUri = $path . '?' . http_build_query($this->_safeParams);
+        }
+        return $this->_safeUri;
     }
 
     /**
-     * 安全的BaseUri
+     * 安全的BaseUrl
      * 通过get参数内的重新拼接
      *
      */
     public function getBaseUrl() {
-
+        if ($this->_safeUrl == null) {
+            $uri = $this->getBaseUri();
+            if ($_SERVER['SERVER_PORT'] == 80 || $_SERVER['SERVER_PORT'] == 433) {
+                $port = '';
+                $schema = 'http';
+                if ($_SERVER['SERVER_PORT'] == 433) {
+                    $schema = 'https';
+                }
+            } else {
+                $port = ':' . $_SERVER['SERVER_PORT'];
+                $schema = 'http';
+            }
+            $this->_safeUrl = $schema . '://' . $_SERVER['SERVER_NAME'] . $port . $uri;
+        }
+        return $this->_safeUrl;
     }
 }

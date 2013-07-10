@@ -39,7 +39,7 @@ function getDirPath($dirname, $basedir = "") {
  */
 function htmlspecialchars_deep($s) {
     if (!is_array($s)) {
-        $s = htmlspecialchars($s, ENT_QUOTES);
+        $s = htmlspecialchars($s, ENT_QUOTES,'ISO-8859-1');
         return $s;
     } else {
         foreach ($s as $i => $j) {

@@ -20,13 +20,29 @@ class F_Helper_Array {
             if (array_key_exists($key, $arr2) && is_array($value)) {
                 $arr1[$key] = self::MergeArray($arr1[$key], $arr2[$key]);
                 unset($arr2[$key]);
-            }
-            else {
+            } else {
                 $arr1[$key] = $value;
             }
         }
         $arr1 = $arr1 + $arr2;
 
         return $arr1;
+    }
+
+    /**
+     * 转义html字符 htmlspecialchars 包含括号
+     *
+     * @param string|array $s
+     */
+    public static function htmlspecialchars($s) {
+        if (!is_array($s)) {
+            $s = htmlspecialchars($s, ENT_QUOTES, 'ISO-8859-1');
+            return $s;
+        } else {
+            foreach ($s as $i => $j) {
+                $s[$i] = self::htmlspecialchars($j);
+            }
+            return $s;
+        }
     }
 }
