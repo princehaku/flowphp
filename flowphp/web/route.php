@@ -48,7 +48,9 @@ class F_Web_Route {
             }
         }
         $uri_parsed = parse_url($uri);
-
+        if (empty($uri_parsed['path'])) {
+            $uri_parsed['path'] = '/';
+        }
         // 按斜杠分拆
         $params = explode("/", trim($uri_parsed['path'], "/\\"));
 

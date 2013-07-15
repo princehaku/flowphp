@@ -142,6 +142,7 @@ class Flow {
             throw new Exception("No APP_PATH or FLOW_PATH Defined");
         }
         $this->setPathOfAlias('system', FLOW_PATH);
+        $this->setPathOfAlias('application', APP_PATH);
         $this->import("system.core.loader", true);
         $this->import("system.helper.array", true);
         // 初始化class_loader
