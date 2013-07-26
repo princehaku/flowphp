@@ -75,9 +75,9 @@ class F_Core_ErrorHandler {
             Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         }
         if ($errors == "Warning") {
-            Flow::Log()->debug(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
+            Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         } else {
-            Flow::Log()->info(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
+            Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         }
         self::dieErrorLogs();
 

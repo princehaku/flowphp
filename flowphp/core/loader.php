@@ -46,9 +46,6 @@ class F_Core_Loader {
             set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
             set_error_handler("F_Core_ErrorHandler::errorHandler");
             register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
-        } else {
-            error_reporting(0);
-            ini_set("display_errors", 0);
         }
     }
 }
