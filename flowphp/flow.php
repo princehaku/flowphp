@@ -71,7 +71,6 @@ class Flow {
             self::$_pathAliases[$alias] = rtrim($path, '\\/');
     }
 
-
     public static function import($path, $include_now = false) {
         if (isset(self::$_imports[$path])) {
             return self::$_imports[$path];
@@ -133,7 +132,7 @@ class Flow {
      * 应用初始化
      * @throws Exception
      */
-    public function init($config = array()) {
+    public function init() {
         if (!defined("DEV_MODE")) {
             define("DEV_MODE", false);
         };
@@ -149,7 +148,7 @@ class Flow {
         $class_loader = new F_Core_Loader();
         $class_loader->registerAutoLoader();
         // 加载所有配置文件
-        $this->_loadcfg($config);
+        $this->_loadcfg();
         // 初始化所有组件
         $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {
@@ -157,18 +156,21 @@ class Flow {
         }
     }
 
+    public function setEnv($env) {
+        self::$cfg['BASE_ENV'] = $env;
+    }
+
     /**
      * 读取和合并配置文件里面的内容
      * @param array $config
      */
-    private function _loadcfg($config = array()) {
-        // 加载所有配置文件
-        self::$cfg = $config;
+    private function _loadcfg() {
         // 合并配置文件
-        self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
+        self::$cfg = F_Helper_Array::MergeArray(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
         // 合并ENV里面的配置
-        if (defined("ENV")) {
-            self::$cfg = array_merge(self::$cfg, $this->_includeCfg(APP_PATH . "/config/" . ENV . "/"));
+        if (!empty(self::$cfg['BASE_ENV'])) {
+            self::$cfg = F_Helper_Array::MergeArray(self::$cfg, $this->_includeCfg(APP_PATH .
+            "/config/" . self::$cfg['BASE_ENV'] . "/"));
         }
     }
 

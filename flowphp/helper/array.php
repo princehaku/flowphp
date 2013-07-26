@@ -10,21 +10,21 @@
 
 class F_Helper_Array {
 
+    /**
+     * 用arr2覆盖arr1相关数组
+     */
     public static function MergeArray($arr1, $arr2) {
 
         if (empty($arr2) || !is_array($arr2)) {
             return $arr1;
         }
 
-        foreach ($arr1 as $key => $value) {
-            if (array_key_exists($key, $arr2) && is_array($value)) {
+        foreach ($arr2 as $key => $value) {
+            if (array_key_exists($key, $arr1) && is_array($value))
                 $arr1[$key] = self::MergeArray($arr1[$key], $arr2[$key]);
-                unset($arr2[$key]);
-            } else {
+            else
                 $arr1[$key] = $value;
-            }
         }
-        $arr1 = $arr1 + $arr2;
 
         return $arr1;
     }
