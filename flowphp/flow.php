@@ -191,9 +191,6 @@ class Flow {
     public static function showLogs() {
         // 打印日志
         if (DEV_MODE) {
-            if (!headers_sent()) {
-                header("Content-Type:text/html;charset=utf-8");
-            }
             if (PHP_SAPI == 'cli') {
                 $errors = FLow::Log()->getDatas();
                 foreach ($errors as $message) {

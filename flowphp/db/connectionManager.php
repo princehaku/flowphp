@@ -50,7 +50,7 @@ class F_DB_ConnectionManager {
         $ps = $dbh->query($sql);
         $error_info = $this->dbh->errorInfo();
         if ($error_info[2] != null) {
-            throw New Exception("执行SQL失败，原因: " . $error_info[2]);
+            throw New Exception("Excute Sql Error: " . $error_info[2]);
         }
         if (is_bool($ps)) {
             return $ps;

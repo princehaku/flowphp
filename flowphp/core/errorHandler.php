@@ -20,9 +20,12 @@ class F_Core_ErrorHandler {
     }
 
     public static function exceptionHandler($exception) {
-        Flow::Log()->error($exception->getMessage());
-        Flow::Log()->traceLog($exception->getTrace());
-        self::dieErrorLogs();
+
+        restore_error_handler();
+        restore_exception_handler();
+
+        echo nl2br($exception);
+        die;
     }
     /**
      * 致命错误处理
@@ -49,7 +52,7 @@ class F_Core_ErrorHandler {
     /**
      * 负责分发错误到日志记录
      */
-    public static function errorHandler($errno, $errstr, $errfile, $errline) {
+    public static function errorHandler($errno, $errstr, $errfile, $errline, $obj) {
 
         restore_error_handler();
         restore_exception_handler();
@@ -71,14 +74,8 @@ class F_Core_ErrorHandler {
                 $errors = "Unknown";
                 break;
         }
-        if ($errors == "Fatal Error") {
-            Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
-        }
-        if ($errors == "Warning") {
-            Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
-        } else {
-            Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
-        }
+        Flow::Log()->clear();
+        Flow::Log()->error(sprintf("%s in %s on line %d", $errstr, $errfile, $errline));
         self::dieErrorLogs();
 
         return false;

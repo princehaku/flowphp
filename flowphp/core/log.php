@@ -45,15 +45,10 @@ class F_Core_Log {
                     continue;
                 }
                 $flow_path = dirname(FLOW_PATH) . "/" . basename(FLOW_PATH);
-                // sys内的不trace
-                if (strpos(str_replace("\\", "/", $j['file']),
-                    str_replace("\\", "/", $flow_path)) !== false
-                ) {
-                    continue;
-                }
                 $this->msg[$this->recordNums++] = array(
                     'type' => "trace",
-                    'msg' => "Trace :" . $j['file'] . "  " . $j['line'] . "行"
+                    'msg' => "Trace #{$i}: " . $j['file'] . "  Line: " . $j['line']
+                    . " " . $j["class"] . " " . $j['function']
                 );
             }
         }
@@ -75,7 +70,7 @@ class F_Core_Log {
             'cat' => $cat,
             'msg' => $msg
         );
-
+        $this->traceLog();
         return $this;
     }
     /**
@@ -93,6 +88,7 @@ class F_Core_Log {
             'cat' => $cat,
             'msg' => $msg
         );
+        $this->traceLog();
         return $this;
     }
 
@@ -131,7 +127,7 @@ class F_Core_Log {
         if (count($this->msg) > 10) {
             $warp = "height:300px;overflow-y:scroll";
         }
-        $c = "<div class='syslog' style='border:1px solid;padding:20px;'>运行日志:<br/><div style='border:1px dashed;$warp'><div>";
+        $c = "<div class='syslog' style='border:1px solid;padding:20px;'>Runtime Log:<br/><div style='border:1px dashed;$warp'><div>";
         foreach (($this->msg) as $i => $j) {
             $c .= $j['msg'] . "<br />";
         }
