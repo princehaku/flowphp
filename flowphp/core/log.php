@@ -44,7 +44,12 @@ class F_Core_Log {
                 if (empty($j['file'])) {
                     continue;
                 }
-                $flow_path = dirname(FLOW_PATH) . "/" . basename(FLOW_PATH);
+                if (empty($j["class"])) {
+                    $j["class"] = "";
+                }
+                if (empty($j["function"])) {
+                    $j["function"] = "";
+                }
                 $this->msg[$this->recordNums++] = array(
                     'type' => "trace",
                     'msg' => "Trace #{$i}: " . $j['file'] . "  Line: " . $j['line']
