@@ -33,7 +33,7 @@ class F_Web_Route {
     }
 
     private function _routeRequest() {
-        $action = 'Main';
+        $action = 'index';
         $method = 'index';
         $base_path = Flow::App()->basePath;
         $uri = $_SERVER['REQUEST_URI'];

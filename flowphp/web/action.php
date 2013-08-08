@@ -29,7 +29,7 @@ class F_Web_Action {
     public function display($view_name = null, $view_data = null) {
         if (empty($view_name)) {
             $view_name = strtolower(get_called_class());
-            $view_name = str_replace("action", "", $view_name);
+            $view_name = str_replace("controller", "", $view_name);
         }
         //调用模板引擎
         $this->_view->display($view_name, $view_data);

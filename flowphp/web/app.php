@@ -34,7 +34,9 @@ class F_Web_App extends F_Core_App {
         $dispatcher = Flow::App()->getComponent('url_router');
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod();
-        $action_name = $action_name . "Controller";
+
+        $action_name = ucfirst($action_name) . "Controller";
+
         $action = new $action_name();
         $method_name = "action" . $method_name;
         // 检测方法
