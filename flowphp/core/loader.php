@@ -16,24 +16,40 @@ class F_Core_Loader {
     public function init() {
     }
 
+    /**
+     * 两种加载模式
+     * @param $class_name
+     * @throws Exception
+     */
     public static function autoLoadHandler($class_name) {
-        $paths = explode("_", $class_name);
-
-        if (isset($paths[0]) && $paths[0] == "F") {
-            unset($paths[0]);
-            $lastp = $paths[(count($paths))];
-            unset($paths[count($paths)]);
-            $file_path = FLOW_PATH . strtolower(implode("/", $paths)) . "/" . lcfirst($lastp) . ".php";
-            if (DEV_MODE) {
-                if (!file_exists($file_path)) {
-                    throw new Exception("类 $class_name 加载失败" . PHP_EOL .
-                    "文件 $file_path 不存在");
-                }
-            }
-            include $file_path;
-        }
         if (isset(Flow::$classMap[$class_name])) {
             include Flow::$classMap[$class_name];
+            return;
+        }
+
+        if (strpos($class_name, "_") !== false) {
+            $paths = explode("_", $class_name);
+
+            if (isset($paths[0])) {
+                if ($paths[0] == "F") {
+                    $paths[0] = FLOW_PATH;
+                }
+                if ($paths[0] == "APP") {
+                    $paths[0] = APP_PATH;
+                }
+                $lastp = $paths[(count($paths) - 1)];
+                unset($paths[count($paths) - 1]);
+                $file_path = strtolower(implode(DIRECTORY_SEPARATOR, $paths)) .
+                    DIRECTORY_SEPARATOR . lcfirst($lastp) . ".php";
+
+                if (DEV_MODE) {
+                    if (!file_exists($file_path)) {
+                        throw new Exception("Class $class_name LoadError" . PHP_EOL .
+                        "File $file_path Not Existed");
+                    }
+                }
+                include $file_path;
+            }
         }
     }
 

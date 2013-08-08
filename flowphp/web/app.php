@@ -34,17 +34,7 @@ class F_Web_App extends F_Core_App {
         $dispatcher = Flow::App()->getComponent('url_router');
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod();
-        // 加载对应的控制类
-        $ac_path = APP_PATH . strtolower("/actions/$action_name.class.php");
-        if (file_exists($ac_path)) {
-            include $ac_path;
-        } else {
-            throw new Exception("控制文件不存在$ac_path");
-        }
-        $action_name = $action_name . "Action";
-        if (!class_exists($action_name)) {
-            throw new Exception("控制类{$action_name} 不存在");
-        }
+        $action_name = $action_name . "Controller";
         $action = new $action_name();
         $method_name = "action" . $method_name;
         // 检测方法

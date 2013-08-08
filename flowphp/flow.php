@@ -13,6 +13,8 @@ class Flow {
 
     public static $classMap = array();
 
+    public static $pathAlias = array();
+
     /**
      * @var F_Core_Log
      */
@@ -24,8 +26,6 @@ class Flow {
     private static $_app;
 
     private static $_imports = array();
-
-    private static $_pathAliases = array();
     /**
      * 日志
      * 单例模式
@@ -59,51 +59,82 @@ class Flow {
     }
 
     public static function getPathOfAlias($alias) {
-        if (isset(self::$_pathAliases[$alias]))
-            return self::$_pathAliases[$alias];
+        if (isset(self::$pathAlias[$alias])) {
+            return self::$pathAlias[$alias];
+        }
         return false;
     }
 
     public static function setPathOfAlias($alias, $path) {
-        if (empty($path))
-            unset(self::$_pathAliases[$alias]);
-        else
-            self::$_pathAliases[$alias] = rtrim($path, '\\/');
+        if (empty($path)) {
+            unset(self::$pathAlias[$alias]);
+        }
+        else {
+            self::$pathAlias[$alias] = rtrim($path, '\\/');
+        }
     }
 
-    public static function import($path, $include_now = false) {
-        if (isset(self::$_imports[$path])) {
-            return self::$_imports[$path];
+    /**
+     * import一个类文件
+     * 要求和
+     *
+     * @param $alias
+     * @param bool $forceInclude
+     * @return mixed
+     */
+    public static function import($alias, $force_include = false) {
+        if (isset(self::$_imports[$alias])) {
+            return self::$_imports[$alias];
         }
-        $alias_arr = explode('.', $path);
-        $base = self::getPathOfAlias($alias_arr[0]);
+        $alias_arr = explode('.', $alias);
+
+        $base = $alias_arr[0];
+        if (isset(self::$pathAlias[$alias_arr[0]])) {
+            $base = self::$pathAlias[$alias_arr[0]];
+        }
         unset($alias_arr[0]);
         $end_seg = $alias_arr[count($alias_arr)];
         unset($alias_arr[count($alias_arr)]);
         $dir_import = $base . '/' . implode('/', $alias_arr) . '/';
 
         if ($end_seg != '*') {
-            self::$_imports[$path] = $dir_import . $end_seg . '.php';
-            self::$classMap[$end_seg] = self::$_imports[$path];
+            self::$_imports[$alias] = $dir_import . $end_seg . '.php';
+            self::$classMap[$end_seg] = self::$_imports[$alias];
         } else {
             // 扫描目录
-            if (!file_exists($dir_import)) {
+            if (!is_dir($dir_import)) {
                 return;
             }
-            $file_arr = scandir($dir_import);
-            foreach ($file_arr as $file_arr) {
-                $path_info = (pathinfo($file_arr));
-                if (!empty($path_info["filename"]) && $path_info["filename"] != '.'
-                    && $path_info["filename"] != '..'
-                ) {
-                    self::$_imports[$path] = $dir_import . $path_info["basename"];
-                    self::$classMap[$path_info["filename"]] = self::$_imports[$path];
+            $dir_imports_new = array($dir_import);
+            while (!empty($dir_imports_new)) {
+                $dir_imports = $dir_imports_new;
+                $dir_imports_new = array();
+                foreach ($dir_imports as $i => $dir_import) {
+
+                    $file_arr = scandir($dir_import);
+                    foreach ($file_arr as $file_arr) {
+                        $path_info = pathinfo($dir_import . DIRECTORY_SEPARATOR . $file_arr);
+                        if (!empty($path_info["filename"]) && $path_info["filename"] != '.'
+                            && $path_info["filename"] != '..'
+                        ) {
+                            if (is_file($dir_import . DIRECTORY_SEPARATOR . $path_info["basename"])) {
+                                self::$_imports[$alias] = $dir_import . DIRECTORY_SEPARATOR . $path_info["basename"];
+                                self::$classMap[$path_info["filename"]] = self::$_imports[$alias];
+                            }
+                            // 继续扫描子类
+                            if (is_dir($dir_import . DIRECTORY_SEPARATOR . $path_info["basename"])) {
+                                $dir_imports_new[] = $dir_import . DIRECTORY_SEPARATOR . $path_info["basename"];
+                            }
+                        }
+                    }
                 }
             }
         }
-        if ($include_now) {
-            include self::$_imports[$path];
+
+        if ($force_include) {
+            include self::$_imports[$alias];
         }
+
     }
 
     /**
@@ -142,13 +173,18 @@ class Flow {
         }
         $this->setPathOfAlias('system', FLOW_PATH);
         $this->setPathOfAlias('application', APP_PATH);
-        $this->import("system.core.loader", true);
-        $this->import("system.helper.array", true);
+        Flow::import("system.core.loader", true);
+        Flow::import("system.helper.array", true);
         // 初始化class_loader
         $class_loader = new F_Core_Loader();
         $class_loader->registerAutoLoader();
         // 加载所有配置文件
         $this->_loadcfg();
+        // import all
+        $imports = isset(self::$cfg["import"]) ? self::$cfg["import"] : array();
+        foreach ($imports as $import) {
+            Flow::import($import);
+        }
         // 初始化所有组件
         $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {

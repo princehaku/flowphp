@@ -91,7 +91,7 @@ class F_View_SViewEngine {
         if (file_exists($tpl_cachepath) && (filemtime($tpl_cachepath) > filemtime($tpl_path))
             && !DEV_MODE
         ) {
-            include_once ($tpl_cachepath);
+            include ($tpl_cachepath);
             return;
         }
         Flow::Log()->info("缓存过期 重新编译");
@@ -106,7 +106,7 @@ class F_View_SViewEngine {
         if (strlen($c) > 0) {
             if (file_put_contents($tpl_cachepath, $c)) {
                 Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
-                include_once ($tpl_cachepath);
+                include ($tpl_cachepath);
             } else {
                 throw new Exception("缓存文件创建失败" . $viewname);
             }

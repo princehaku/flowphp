@@ -157,7 +157,7 @@ class F_View_BaseTags {
         // list 的name
         preg_match("/.*?from=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list 标签必须包含from属性");
+            throw new Exception("list tags Must have property from and val");
         }
         $tagname = $tag[1];
         // list 的key
@@ -166,7 +166,7 @@ class F_View_BaseTags {
         // list 的val
         preg_match("/.*?val=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list 标签必须包含val属性");
+            throw new Exception("list tags Must have property from and val");
         }
         $tag_val = $tag[1];
         // 替换标签;

@@ -7,10 +7,10 @@
  *  Author     : haku
  *  Blog       : http://3haku.net
  */
-
 class F_Cache_File implements ArrayAccess {
 
     private $_cachedValues = array();
+
     private $_baseDir;
 
     public function init() {
