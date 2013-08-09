@@ -10,6 +10,7 @@
 
 return array(
     "import" => array(
+    	"application.actions.*"
     ),
     "components" => array(
         'abc' => array(
