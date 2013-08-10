@@ -6,7 +6,7 @@
  *  Created on : 13-3-21 , 下午7:01
  *  Author     : zhongwei.bzw
  */
-class MainAction extends F_Web_Action {
+class MainController extends F_Web_Controller {
 
     public function actionIndex() {
         FLow::app()->request->getText("a");

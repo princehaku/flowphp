@@ -24,14 +24,14 @@ class F_DB_ConnectionManager {
      */
     protected $dbh;
 
-    protected $dbname;
+    public $dbname;
     /**
      *
      */
     public function init() {
         $dbh = new PDO($this->connectionString, $this->username, $this->password);
         preg_match("/dbname=(.*?);+/", $this->connectionString, $matches);
-        $this->dbname = $matches[1];
+        $this->dbname = isset($matches[1]) ? $matches[1] : '';
         $this->dbh = $dbh;
         if (!empty($this->charset)) {
             $this->query("set names " . $this->charset);

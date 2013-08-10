@@ -92,6 +92,7 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
 
     public function __clone() {
     }
+
     /**
      * 保存一条记录
      * 要求和表的字段对应
@@ -102,7 +103,7 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
     public function save($record) {
 
         if (empty($record)) {
-            throw new Exception("需要保存的acriveRecord为空");
+            throw new Exception("no acriveRecord to save");
         }
         if (!is_array($record)) {
             $record = (array)$record;
@@ -118,12 +119,12 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
                 $value = $value . "";
             }
             if (DEV_MODE && !is_string($value)) {
-                throw new Exception("activeRecord{$key}的值必须是字符串类型");
+                throw new Exception("activeRecord{$key} can only be string");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord{$key}的值必须对应到表的字段");
+                throw new Exception("activeRecord{$key} does not mapping to forms");
             }
             $keys[] = "`$key`";
             $values[] = "'$value'";
@@ -153,12 +154,12 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
                 $value = $value . "";
             }
             if (DEV_MODE && !is_string($value)) {
-                throw new Exception("activeRecord{$key}的值必须是字符串类型");
+                throw new Exception("activeRecord{$key} can only be string");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord{$key}的值必须对应到表的字段");
+                throw new Exception("activeRecord{$key} does not mapping to forms");
             }
             if (strpos($this->tableinfo[$key]["PRI"], "PRI") !== false) {
                 $has_pk = true;
@@ -168,7 +169,7 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
         }
 
         if (!$has_pk) {
-            throw new Exception("要保存它，必须存在对应的主键");
+            throw new Exception("You Must Define PK In DB");
         }
 
         $sql = "update " . $this->tablename . " set " . implode(",", $sets) . $query_where;
@@ -188,7 +189,7 @@ class F_DB_ArManager extends F_DB_ConnectionManager {
 
         $ps = $dbh->query("desc $table_name");
         if ($ps == false) {
-            throw new Exception("不存在的表 $table_name");
+            throw new Exception("Table $table_name doesn't Existed ");
         }
         $res_arr = $ps->fetchAll(PDO::FETCH_ASSOC);
         $col_infos = array();

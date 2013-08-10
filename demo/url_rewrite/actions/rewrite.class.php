@@ -8,7 +8,7 @@
  *  Blog       : http://3haku.net
  */
 
-class RewriteAction extends F_Web_Action {
+class RewriteController extends F_Web_Controller {
 
     public function actionIndex() {
         echo "All Get Various <br />";

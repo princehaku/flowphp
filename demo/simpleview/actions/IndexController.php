@@ -2,11 +2,11 @@
 /**
  * Copyright 2013 princehaku
  *
- *  FileName : IndexController
+ *  FileName : main.php
  *  Created on : 13-3-21 , 下午7:01
  *  Author     : zhongwei.bzw
  */
-class IndexController extends F_Web_Action {
+class MainController extends F_Web_Controller {
 
     public function actionIndex() {
         $this->assign("s", "bbb");

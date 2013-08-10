@@ -6,7 +6,7 @@
  *  Created on : 13-3-21 , 下午7:01
  *  Author     : zhongwei.bzw
  */
-class TestAction extends F_Web_Action {
+class TestController extends F_Web_Controller {
 
     public function actionB() {
         echo "!!!不应该进这个类!!!";

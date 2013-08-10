@@ -8,10 +8,17 @@
 
 /**
  * 默认控制器类
- * F_Web_Action
+ * F_Web_Controller
  */
-class F_Web_Action {
+class F_Web_Controller {
 
+    public function init() {
+
+    }
+
+    public function beforeController() {
+
+    }
     /**
      * @var F_Web_Request
      */
@@ -20,10 +27,10 @@ class F_Web_Action {
     /**
      * @var F_View_SViewEngine
      */
-    private $_view;
+    public  $viewEngine;
 
     public function setViewEngine($view_engine) {
-        $this->_view = $view_engine;
+        $this->viewEngine = $view_engine;
     }
 
     public function display($view_name = null, $view_data = null) {
@@ -31,13 +38,13 @@ class F_Web_Action {
             $view_name = strtolower(get_called_class());
             $view_name = str_replace("controller", "", $view_name);
         }
-        //调用模板引擎
-        $this->_view->display($view_name, $view_data);
+        // 调用模板引擎
+        $this->viewEngine->display($view_name, $view_data);
     }
 
     public function assign($key, $value) {
         // 调用模版
-        return $this->_view->assign($key, $value);
+        return $this->viewEngine->assign($key, $value);
     }
 
 }

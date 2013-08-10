@@ -37,16 +37,19 @@ class F_Web_App extends F_Core_App {
 
         $action_name = ucfirst($action_name) . "Controller";
 
-        $action = new $action_name();
+        $action = Flow::App()->createComponent(array(
+            'class' => $action_name,
+            'viewEngine' => array(
+                'class' => 'F_View_SViewEngine'
+            ),
+            'request' => Flow::App()->getComponent('request')
+        ));
+        $action->beforeController();
         $method_name = "action" . $method_name;
         // 检测方法
         if (!method_exists($action, $method_name)) {
-            throw new Exception("控制类{$action_name} 没有{$method_name} 方法");
+            throw new Exception("Controller {$action_name} has No {$method_name} Method");
         }
-        // 初始化action的一些组件
-        $action->setViewEngine(new F_View_SViewEngine());
-        $request = Flow::App()->request;
-        $action->request = $request;
         // 执行方法
         $action->$method_name();
     }
