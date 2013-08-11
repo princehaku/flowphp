@@ -103,7 +103,7 @@ class F_DB_ArManager extends F_DB_Basic {
     public function save($record) {
 
         if (empty($record)) {
-            throw new Exception("no acriveRecord to save");
+            throw new Exception("no ActiveRecord to save");
         }
         if (!is_array($record)) {
             $record = (array)$record;
@@ -119,12 +119,12 @@ class F_DB_ArManager extends F_DB_Basic {
                 $value = $value . "";
             }
             if (DEV_MODE && !is_string($value)) {
-                throw new Exception("activeRecord{$key} can only be string");
+                throw new Exception("ActiveRecord {$key} can only be string");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord{$key} does not mapping to forms");
+                throw new Exception("ActiveRecord {$key} does not mapping to forms");
             }
             $keys[] = "`$key`";
             $values[] = "'$value'";
@@ -154,12 +154,12 @@ class F_DB_ArManager extends F_DB_Basic {
                 $value = $value . "";
             }
             if (DEV_MODE && !is_string($value)) {
-                throw new Exception("activeRecord{$key} can only be string");
+                throw new Exception("ActiveRecord {$key} can only be string");
             }
             // avoid sql inject
             $value = addslashes($value);
             if (empty($this->tableinfo[$key])) {
-                throw new Exception("activeRecord{$key} does not mapping to forms");
+                throw new Exception("ActiveRecord {$key} does not mapping to forms");
             }
             if (strpos($this->tableinfo[$key]["PRI"], "PRI") !== false) {
                 $has_pk = true;
