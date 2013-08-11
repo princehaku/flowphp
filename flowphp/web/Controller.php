@@ -27,10 +27,20 @@ class F_Web_Controller {
     /**
      * @var F_View_SViewEngine
      */
-    public  $viewEngine;
+    public $viewEngine;
 
     public function setViewEngine($view_engine) {
         $this->viewEngine = $view_engine;
+    }
+
+    public function displayView($view_name = null, $view_data = null) {
+        // 调用模板引擎
+        $this->viewEngine->displayView($view_name, $view_data);
+    }
+
+    public function displayLayout($layout_name = null, $view_data = null) {
+        // 调用模板引擎
+        $this->viewEngine->displayLayout($layout_name, $view_data);
     }
 
     public function display($view_name = null, $view_data = null) {

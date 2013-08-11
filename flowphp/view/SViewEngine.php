@@ -50,6 +50,29 @@ class F_View_SViewEngine {
     }
 
     /**
+     * @param null $layout_name
+     * @param null $view_data
+     */
+    public function displayLayout($layout_name = null, $view_data = null) {
+        // 调用模板引擎
+        $this->display("layouts/" . $layout_name, $view_data);
+    }
+
+    /**
+     * @param null $view_name
+     * @param null $view_data
+     */
+    public function displayView($view_name = null, $view_data = null) {
+        if ($view_name == null) {
+            $view_name = Flow::App()->url_router->getMethod();
+        }
+        $action = Flow::App()->url_router->getAction();
+        $view_path = strtolower($action) . "/" . $view_name;
+        // 调用模板引擎
+        $this->display("views/" . $view_path, $view_data);
+    }
+
+    /**
      * 打印输出
      *
      * @param $viewname

@@ -23,7 +23,8 @@ class F_Web_App extends F_Core_App {
     );
 
     public function init() {
-        $this->basePath = dirname($_SERVER["SCRIPT_NAME"]);
+        $path = dirname($_SERVER["SCRIPT_NAME"]);
+        $this->basePath = str_replace("\\", "/", $path);
         $components = F_Helper_Array::MergeArray($this->baseComponents, Flow::$cfg);
         // 初始化所有组件
         $this->setComponent('request', $components["components"]['request']);

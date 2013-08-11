@@ -35,7 +35,7 @@ class F_Core_App {
      */
     public function getComponent($name) {
         if (empty($this->_compConfig[$name])) {
-            throw new Exception("组件{$name}不存在");
+            throw new Exception("Component {$name} Not Defined");
         }
         if (is_object($this->_compConfig[$name])) {
             return $this->_compConfig[$name];
