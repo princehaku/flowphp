@@ -40,7 +40,7 @@ class F_Core_Loader {
                 $lastp = $paths[(count($paths) - 1)];
                 unset($paths[count($paths) - 1]);
                 $file_path = strtolower(implode(DIRECTORY_SEPARATOR, $paths)) .
-                    DIRECTORY_SEPARATOR . lcfirst($lastp) . ".php";
+                    DIRECTORY_SEPARATOR . $lastp . ".php";
 
                 if (DEV_MODE) {
                     if (!file_exists($file_path)) {
