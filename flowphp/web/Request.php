@@ -112,7 +112,8 @@ class F_Web_Request {
             } else {
                 $path = substr($_SERVER['REQUEST_URI'], 0, $ps);
             }
-            $this->_safeUri = $path . '?' . http_build_query($this->_safeParams);
+            $this->_safeUri = empty($this->_safeParams) ? $path :
+                $path . '?' . http_build_query($this->_safeParams);
         }
         return $this->_safeUri;
     }
