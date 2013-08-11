@@ -8,7 +8,7 @@
  * @site http://3haku.net
  */
 
-class F_DB_ConnectionManager {
+class F_DB_Basic {
 
     public $connectionString = "";
 

@@ -13,7 +13,7 @@
  * @author princehaku
  * @site http://3haku.net
  */
-class F_Cli_Route {
+class F_Cli_Router {
 
     protected $action;
 

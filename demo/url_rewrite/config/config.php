@@ -13,7 +13,7 @@ return array(
     ),
     "components" => array(
         "url_router" => array(
-            "class" => "F_Web_Route",
+            "class" => "F_Web_Router",
             'rewrite_rules'=>array(
                 '/test\/b/' => 'rewrite/index',
             )
