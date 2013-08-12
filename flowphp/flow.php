@@ -45,7 +45,7 @@ class Flow {
      *
      * @return F_Core_App
      */
-    public static function App() {
+    public static function app() {
         if (Flow::$_app == null) {
             //初始化基础APP
             if (PHP_SAPI === "cli") {
@@ -188,7 +188,7 @@ class Flow {
         // 初始化所有组件
         $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {
-            self::App()->setComponent($name, $config);
+            self::app()->setComponent($name, $config);
         }
     }
 
@@ -216,7 +216,7 @@ class Flow {
     public function run() {
         // 初始化各种东西
         $this->init();
-        $this->App()->run();
+        $this->app()->run();
     }
 
 

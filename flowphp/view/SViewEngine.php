@@ -64,9 +64,9 @@ class F_View_SViewEngine {
      */
     public function displayView($view_name = null, $view_data = null) {
         if ($view_name == null) {
-            $view_name = Flow::App()->url_router->getMethod();
+            $view_name = Flow::app()->url_router->getMethod();
         }
-        $action = Flow::App()->url_router->getAction();
+        $action = Flow::app()->url_router->getAction();
         $view_path = strtolower($action) . "/" . $view_name;
         // 调用模板引擎
         $this->display("views/" . $view_path, $view_data);

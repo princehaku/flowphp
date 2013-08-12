@@ -10,7 +10,7 @@ class MainController extends F_Web_Controller {
 
     public function actionIndex() {
         FLow::app()->request->getText("a");
-        $entry_acm = Flow::App()->acm->table("entry");
+        $entry_acm = Flow::app()->acm->table("entry");
 
         $comicnodes = $entry_acm->where("cat='cartoon'")->order("publish_date desc, `dsr_score` desc")->limit("30")->findall();
         $movienodes = $entry_acm->where("cat='movie'")->order("publish_date desc, `dsr_score` desc")->limit("30")->findall();

@@ -32,7 +32,7 @@ class F_Web_App extends F_Core_App {
     }
 
     public function run() {
-        $dispatcher = Flow::App()->getComponent('url_router');
+        $dispatcher = Flow::app()->getComponent('url_router');
         $action_name = $dispatcher->getAction();
         $method_name = $dispatcher->getMethod();
 
@@ -49,12 +49,12 @@ class F_Web_App extends F_Core_App {
             }
         }
 
-        $action = Flow::App()->createComponent(array(
+        $action = Flow::app()->createComponent(array(
             'class' => $action_name,
             'viewEngine' => array(
                 'class' => 'F_View_SViewEngine'
             ),
-            'request' => Flow::App()->getComponent('request')
+            'request' => Flow::app()->getComponent('request')
         ));
         $action->beforeController();
         $method_name = "action" . $method_name;

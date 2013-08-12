@@ -10,6 +10,7 @@
 
 return array(
     "import" => array(
+        "application.commands.*"
     ),
     "components" => array(
         "acm" => array(

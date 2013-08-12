@@ -2,7 +2,7 @@
 /**
  * Copyright 2013 princehaku
  *
- *  FileName   : go.class.php
+ *  FileName   : GoCommand.php
  *  Created on : 13-5-6 , 下午11:19
  *  Author     : haku
  *  Blog       : http://3haku.net

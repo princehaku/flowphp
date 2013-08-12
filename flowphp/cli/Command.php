@@ -17,4 +17,12 @@ class F_Cli_Command {
      * @var F_Cli_Request
      */
     public $request;
+
+    public function init() {
+
+    }
+
+    public function beforeCommand() {
+
+    }
 }

@@ -9,7 +9,7 @@
 class MainController extends F_Web_Controller {
 
     public function actionIndex() {
-        header('Location:' . Flow::App()->basePath . '/test/b');
+        header('Location:' . Flow::app()->basePath . '/test/b');
 
         $this->display();
     }

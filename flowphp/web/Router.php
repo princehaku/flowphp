@@ -35,7 +35,7 @@ class F_Web_Router {
     private function _routeRequest() {
         $action = 'index';
         $method = 'index';
-        $base_path = Flow::App()->basePath;
+        $base_path = Flow::app()->basePath;
         $uri = $_SERVER['REQUEST_URI'];
         if (strpos($uri, $base_path) === 0) {
             $uri = substr($uri, strlen($base_path));
