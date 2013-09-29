@@ -177,9 +177,8 @@ class F_DB_ArManager {
      * @throws Exception
      */
     private function _fetchTableInfo($table_name) {
-        $f_cache = new F_Cache_File();
-        $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
-        $f_cache->setBaseDir($appcache_dir);
+
+        $f_cache = FLow::app()->file_cache;
 
         if (!DEV_MODE && null != $f_cache["db." . $this->dbb->dbname . "_" . $table_name]) {
             return $f_cache["db." . $this->dbb->dbname . "_" . $table_name];

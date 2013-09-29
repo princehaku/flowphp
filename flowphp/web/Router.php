@@ -70,7 +70,7 @@ class F_Web_Router {
         if (!empty($_GET['method'])) {
             $method = $_GET['method'];
         }
-        // 设置到请求里面
+        // 多余的参数设置到请求里面
         foreach ($params as $i => $j) {
             if ($i % 2 == 1 && $i != 0) {
                 if ($params[$i - 1] != "") {

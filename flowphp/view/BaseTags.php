@@ -63,7 +63,7 @@ class F_View_BaseTags {
     public function apply($source) {
         // LIST标签替换
         $this->parseList($source);
-        // 替换全局${$}标签为单词
+        // 替换全局{{$}}标签为单词
         $this->parseToken($source);
         // 替换if标签对
         $this->parseIf($source);
@@ -120,7 +120,7 @@ class F_View_BaseTags {
     private function parseToken(&$source) {
         $matches = array();
         // 替换{$xxx}标签为实体
-        preg_match_all("/\\$\\{(.*?)\\}/", $source, $matches, PREG_SET_ORDER);
+        preg_match_all("/\\{\\{(.*?)\\}\\}/", $source, $matches, PREG_SET_ORDER);
 
         if ($matches == null) {
             return false;
@@ -130,7 +130,7 @@ class F_View_BaseTags {
             $tagname = $j[1];
             $converted_token = $this->_tokenParser($tagname);
             $val = "<?php echo $converted_token; ?>";
-            $source = str_replace("\${" . $tagname . "}", $val, $source);
+            $source = str_replace("{{" . $tagname . "}}", $val, $source);
         }
 
         return true;
@@ -157,16 +157,16 @@ class F_View_BaseTags {
         // list 的name
         preg_match("/.*?from=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list tags Must have property from and val");
+            throw new Exception("list tags Must have property from and as");
         }
         $tagname = $tag[1];
         // list 的key
         preg_match("/.*?key=\"(.*?)\"/", $parm, $tag);
         $tag_key = isset($tag[1]) ? $tag[1] : "";
         // list 的val
-        preg_match("/.*?val=\"(.*?)\"/", $parm, $tag);
+        preg_match("/.*?as=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list tags Must have property from and val");
+            throw new Exception("list tags Must have property from and as");
         }
         $tag_val = $tag[1];
         // 替换标签;

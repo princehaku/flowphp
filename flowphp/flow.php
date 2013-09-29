@@ -76,7 +76,7 @@ class Flow {
 
     /**
      * import一个类文件
-     * 要求和
+     * 要求和类目完全对应
      *
      * @param $alias
      * @param bool $forceInclude
@@ -160,6 +160,19 @@ class Flow {
     }
 
     /**
+     * 开发模式启用
+     */
+    public function initDevMode() {
+        $using_error_handler = isset(self::$cfg["enableErrorHandler"]) ? self::$cfg["enableErrorHandler"] : true;
+        // 配置异常处理
+        if ($using_error_handler) {
+            set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
+            set_error_handler("F_Core_ErrorHandler::errorHandler");
+            register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
+        }
+    }
+
+    /**
      * 应用初始化
      * @throws Exception
      */
@@ -171,15 +184,17 @@ class Flow {
         if (!defined("APP_PATH") || !defined("FLOW_PATH")) {
             throw new Exception("No APP_PATH or FLOW_PATH Defined");
         }
+        $this->setPathOfAlias('F', FLOW_PATH);
         $this->setPathOfAlias('system', FLOW_PATH);
         $this->setPathOfAlias('application', APP_PATH);
-        Flow::import("system.core.loader", true);
-        Flow::import("system.helper.array", true);
+        Flow::import("system.core.Loader", true);
         // 初始化class_loader
         $class_loader = new F_Core_Loader();
         $class_loader->registerAutoLoader();
         // 加载所有配置文件
         $this->_loadcfg();
+        // 开发模式配置
+        $this->initDevMode();
         // import all
         $imports = isset(self::$cfg["import"]) ? self::$cfg["import"] : array();
         foreach ($imports as $import) {
@@ -193,7 +208,7 @@ class Flow {
     }
 
     public function setEnv($env) {
-        self::$cfg['BASE_ENV'] = $env;
+        self::$cfg['base_env'] = $env;
     }
 
     /**
@@ -204,9 +219,9 @@ class Flow {
         // 合并配置文件
         self::$cfg = F_Helper_Array::MergeArray(self::$cfg, $this->_includeCfg(APP_PATH . "/config/"));
         // 合并ENV里面的配置
-        if (!empty(self::$cfg['BASE_ENV'])) {
+        if (!empty(self::$cfg['base_env'])) {
             self::$cfg = F_Helper_Array::MergeArray(self::$cfg, $this->_includeCfg(APP_PATH .
-            "/config/" . self::$cfg['BASE_ENV'] . "/"));
+            "/config/" . self::$cfg['base_env'] . "/"));
         }
     }
 
@@ -216,12 +231,13 @@ class Flow {
     public function run() {
         // 初始化各种东西
         $this->init();
+        // 运行实例
         $this->app()->run();
     }
 
 
     /**
-     * 打印页面日志并结束脚本
+     * 打印页面日志
      *
      */
     public static function showLogs() {

@@ -13,10 +13,10 @@
             <list from="$comicnodes" val="$vo">
                 <li class="span3">
                     <div class="thumbnail">
-                        <img src="${$vo.main_pic}"/>
+                        <img src="{{$vo.main_pic}}"/>
                         <div class="caption">
-                            <p class="title">${$vo.title}</p>
-                            <div class="intro">${$vo.description}</div>
+                            <p class="title">{{$vo.title}}</p>
+                            <div class="intro">{{$vo.description}}</div>
                             <a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a>
                         </div>
                     </div>
@@ -31,10 +31,10 @@
             <list from="$movienodes" val="$vo">
                 <li class="span3">
                     <div class="thumbnail">
-                        <img src="${$vo.main_pic}"/>
+                        <img src="{{$vo.main_pic}}"/>
                         <div class="caption">
-                            <p class="title">${$vo.title}</p>
-                            <div class="intro">${$vo.description}</div>
+                            <p class="title">{{$vo.title}}</p>
+                            <div class="intro">{{$vo.description}}</div>
                             <a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a>
                         </div>
                     </div>

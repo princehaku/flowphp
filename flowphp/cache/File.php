@@ -9,25 +9,29 @@
  */
 class F_Cache_File implements ArrayAccess {
 
+    public $baseDir;
+
     private $_cachedValues = array();
 
-    private $_baseDir;
-
     public function init() {
-        $this->_baseDir = $_SERVER['TMP'];
-    }
-
-    public function setBaseDir($base_dir) {
-        $this->_baseDir = $base_dir;
+        $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
+        if (!file_exists($appcache_dir)) {
+            if (!mkdir($appcache_dir, 0777, 1)) {
+                throw new Exception("Cache Dir " . $appcache_dir . " Failed");
+            }
+        }
+        $this->baseDir = $appcache_dir;
     }
 
     public function put($key, $value, $expires = -1) {
         $key = str_replace(".", "/", $key);
-        $dir = dirname($this->_baseDir . "/" . $key . ".php");
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, 1);
+        $cache_dir = dirname($this->baseDir . "/" . $key . ".php");
+        if (!file_exists($cache_dir)) {
+            if (!mkdir($cache_dir, 0777, 1)) {
+                throw new Exception("Cache Dir " . $cache_dir . " Failed");
+            }
         }
-        file_put_contents($this->_baseDir . "/" . $key . ".php", '<?php return ' . var_export($value, 1) . ';');
+        file_put_contents($this->baseDir . "/" . $key . ".php", '<?php return ' . var_export($value, 1) . ';');
         $this->_cachedValues[$key] = $value;
     }
 
@@ -36,8 +40,8 @@ class F_Cache_File implements ArrayAccess {
         $value = null;
         if (isset($this->_cachedValues[$key])) {
             $value = $this->_cachedValues[$key];
-        } else if (file_exists($this->_baseDir . "/" . $key . ".php")) {
-            $value = include $this->_baseDir . "/" . $key . ".php";
+        } else if (file_exists($this->baseDir . "/" . $key . ".php")) {
+            $value = include $this->baseDir . "/" . $key . ".php";
             $this->_cachedValues[$key] = $value;
         }
         return $value;
@@ -107,8 +111,8 @@ class F_Cache_File implements ArrayAccess {
      */
     public function offsetUnset($offset) {
         $key = str_replace(".", "/", $offset);
-        if (file_exists($this->_baseDir . "/" . $key . ".php")) {
-            unlink($this->_baseDir . "/" . $key . ".php");
+        if (file_exists($this->baseDir . "/" . $key . ".php")) {
+            unlink($this->baseDir . "/" . $key . ".php");
             unset($this->_cachedValues[$key]);
         }
     }

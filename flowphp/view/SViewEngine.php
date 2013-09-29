@@ -7,6 +7,9 @@
  * @site http://3haku.net
  */
 
+/**
+ * Class F_View_SViewEngine
+ */
 class F_View_SViewEngine {
 
     public function init() {
@@ -50,29 +53,6 @@ class F_View_SViewEngine {
     }
 
     /**
-     * @param null $layout_name
-     * @param null $view_data
-     */
-    public function displayLayout($layout_name = null, $view_data = null) {
-        // 调用模板引擎
-        $this->display("layouts/" . $layout_name, $view_data);
-    }
-
-    /**
-     * @param null $view_name
-     * @param null $view_data
-     */
-    public function displayView($view_name = null, $view_data = null) {
-        if ($view_name == null) {
-            $view_name = Flow::app()->url_router->getMethod();
-        }
-        $action = Flow::app()->url_router->getAction();
-        $view_path = strtolower($action) . "/" . $view_name;
-        // 调用模板引擎
-        $this->display("views/" . $view_path, $view_data);
-    }
-
-    /**
      * 打印输出
      *
      * @param $viewname
@@ -99,7 +79,7 @@ class F_View_SViewEngine {
         // 检测缓存文件夹是否存在
         if (!file_exists($cache_dir)) {
             if (!mkdir($cache_dir, 0777, 1)) {
-                throw new Exception("缓存文件夹" . $cache_dir . "创建失败");
+                throw new Exception("Create Cache Dir " . $cache_dir . " Failed");
             }
         }
         // 模板文件
@@ -111,8 +91,8 @@ class F_View_SViewEngine {
 
 
         // 搜索模板文件是否存在
-        if (DEV_MODE && !file_exists($tplfile)) {
-            throw new Exception("模版文件不存在  " . $tplfile);
+        if (DEV_MODE && !is_file($tplfile)) {
+            throw new Exception("Template File Not Found " . $tplfile);
         }
         // 如果没有在dev_mode且缓存文件最后修改时间比templatefile旧 直接包含缓存
         if (file_exists($tpl_cachepath) && (filemtime($tpl_cachepath) > filemtime($tpl_path))
@@ -121,7 +101,7 @@ class F_View_SViewEngine {
             include($tpl_cachepath);
             return;
         }
-        Flow::Log()->info("缓存过期 重新编译");
+        Flow::Log()->info("Cache View Expired");
         // 读取模板文件
         $c = file_get_contents($tpl_path);
         // 读取tag
@@ -132,10 +112,10 @@ class F_View_SViewEngine {
         // 存储编译后的到文件
         if (strlen($c) > 0) {
             if (file_put_contents($tpl_cachepath, $c)) {
-                Flow::Log()->info("缓存文件{$tpl_cachepath}创建完成");
+                Flow::Log()->info("Cache File {$tpl_cachepath} Created ");
                 include($tpl_cachepath);
             } else {
-                throw new Exception("缓存文件创建失败" . $viewname);
+                throw new Exception("Cache File Create Failed " . $viewname);
             }
         }
     }

@@ -31,15 +31,15 @@ class F_Core_Loader {
             $paths = explode("_", $class_name);
 
             if (isset($paths[0])) {
-                if ($paths[0] == "F") {
-                    $paths[0] = FLOW_PATH;
-                }
-                if ($paths[0] == "APP") {
-                    $paths[0] = APP_PATH;
-                }
+                $paths[0] = Flow::getPathOfAlias($paths[0]);
                 $lastp = $paths[(count($paths) - 1)];
                 unset($paths[count($paths) - 1]);
-                $file_path = strtolower(implode(DIRECTORY_SEPARATOR, $paths)) .
+                foreach ($paths as $i => $path_seg) {
+                    if ($i != 0 ) {
+                        $paths[$i] = strtolower($path_seg);
+                    }
+                }
+                $file_path = implode(DIRECTORY_SEPARATOR, $paths) .
                     DIRECTORY_SEPARATOR . $lastp . ".php";
 
                 if (DEV_MODE) {
@@ -55,13 +55,5 @@ class F_Core_Loader {
 
     public function registerAutoLoader() {
         spl_autoload_register("F_Core_Loader::autoLoadHandler");
-        // 配置异常处理
-        if (DEV_MODE) {
-            ini_set("display_errors", 1);
-            error_reporting(E_ALL);
-            set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
-            set_error_handler("F_Core_ErrorHandler::errorHandler");
-            register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
-        }
     }
 }

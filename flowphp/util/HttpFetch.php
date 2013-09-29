@@ -5,6 +5,9 @@
  * 支持cookie
  */
 
+/**
+ * Class F_Util_HttpFetch
+ */
 class F_Util_HttpFetch {
     /** Curl handler
      *

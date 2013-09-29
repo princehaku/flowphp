@@ -18,6 +18,9 @@ class F_Web_App extends F_Core_App {
             ),
             "url_router" => array(
                 "class" => "F_Web_Router"
+            ),
+            "file_cache" => array(
+                "class" => "F_Cache_File"
             )
         )
     );
@@ -27,8 +30,9 @@ class F_Web_App extends F_Core_App {
         $this->basePath = str_replace("\\", "/", $path);
         $components = F_Helper_Array::MergeArray($this->baseComponents, Flow::$cfg);
         // 初始化所有组件
-        $this->setComponent('request', $components["components"]['request']);
-        $this->setComponent('url_router', $components["components"]['url_router']);
+        foreach ($this->baseComponents["components"] as $key => $arr) {
+            $this->setComponent($key, $components["components"][$key]);
+        }
     }
 
     public function run() {
