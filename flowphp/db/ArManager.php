@@ -10,7 +10,11 @@
 /**
  * Class F_DB_ArManager
  */
-class F_DB_ArManager extends F_DB_Basic {
+class F_DB_ArManager {
+    /**
+     * @var F_DB_Basic
+     */
+    public $dbb;
 
     public $tablename;
 
@@ -23,8 +27,6 @@ class F_DB_ArManager extends F_DB_Basic {
     private $_query_order = "";
 
     private $_query_limit = "";
-
-    protected static $acm;
     /**
      * sql语句中的where字段
      *
@@ -38,6 +40,7 @@ class F_DB_ArManager extends F_DB_Basic {
 
     /**
      * sql语句中的limit字段
+     *
      * @param null $offset
      * @param null $size
      * @return $this
@@ -52,6 +55,7 @@ class F_DB_ArManager extends F_DB_Basic {
 
     /**
      * sql语句中的order字段
+     *
      * @param $order
      * @return $this
      */
@@ -67,30 +71,13 @@ class F_DB_ArManager extends F_DB_Basic {
         $sql = "select * from " . $this->tablename . $this->_query_where .
             $this->_query_order . $this->_query_limit;
         $this->_clearStatues();
-        $res_arr = $this->query($sql);
+        $res_arr = $this->dbb->query($sql);
         return $res_arr;
     }
 
     private function _clearStatues() {
         $this->_query_where =
         $this->_query_order = $this->_query_limit = "";
-    }
-
-    /**
-     * 初始化 acl要求必须指定表名
-     *
-     * @return F_DB_ArManager
-     */
-    public function table($tablename, $new_instance = false) {
-        if (empty(self::$acm[$tablename]) || $new_instance) {
-            self::$acm[$tablename] = clone $this;
-            self::$acm[$tablename]->tablename = $tablename;
-            self::$acm[$tablename]->tableinfo = $this->_fetchTableInfo($tablename);
-        }
-        return self::$acm[$tablename];
-    }
-
-    public function __clone() {
     }
 
     /**
@@ -133,7 +120,7 @@ class F_DB_ArManager extends F_DB_Basic {
         $sql = "insert into `" . $this->tablename . "` (" . implode(",", $keys) . ") values (" .
             implode(",", $values) . ")";
 
-        $query_status = $this->query($sql);
+        $query_status = $this->dbb->query($sql);
         return $query_status;
     }
 
@@ -173,17 +160,29 @@ class F_DB_ArManager extends F_DB_Basic {
         }
 
         $sql = "update " . $this->tablename . " set " . implode(",", $sets) . $query_where;
-        $query_status = $this->query($sql);
+        $query_status = $this->dbb->query($sql);
         return $query_status;
     }
 
-    public function _fetchTableInfo($table_name) {
+    public function setDBTable($db, $table_name) {
+        $this->dbb = $db;
+        $this->tablename = $table_name;
+        $this->tableinfo = $this->_fetchTableInfo($table_name);
+    }
+
+    /**
+     * 查询DB的meta信息
+     * @param $table_name
+     * @return array
+     * @throws Exception
+     */
+    private function _fetchTableInfo($table_name) {
         $f_cache = new F_Cache_File();
         $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
         $f_cache->setBaseDir($appcache_dir);
 
-        if (!DEV_MODE && null != $f_cache["db." . $this->dbname . "_" . $table_name]) {
-            return $f_cache["db." . $this->dbname . "_" . $table_name];
+        if (!DEV_MODE && null != $f_cache["db." . $this->dbb->dbname . "_" . $table_name]) {
+            return $f_cache["db." . $this->dbb->dbname . "_" . $table_name];
         }
         $dbh = $this->dbh;
 
@@ -199,7 +198,7 @@ class F_DB_ArManager extends F_DB_Basic {
                 //die($res["Field"]);
             }
         }
-        $f_cache["db." . $this->dbname . "_" . $table_name] = $col_infos;
+        $f_cache["db." . $this->dbb->dbname . "_" . $table_name] = $col_infos;
         return $col_infos;
     }
 
