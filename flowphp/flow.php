@@ -97,7 +97,7 @@ class Flow {
         unset($alias_arr[count($alias_arr)]);
         $dir_import = $base . '/' . implode('/', $alias_arr) . '/';
 
-        if ($end_seg != '*') {
+        if ($force_include || $end_seg != '*') {
             self::$_imports[$alias] = $dir_import . $end_seg . '.php';
             self::$classMap[$end_seg] = self::$_imports[$alias];
         } else {
@@ -200,7 +200,7 @@ class Flow {
         foreach ($imports as $import) {
             Flow::import($import);
         }
-        // 初始化所有组件
+        // 初始化所有系统底层组件
         $components = isset(self::$cfg["components"]) ? self::$cfg["components"] : array();
         foreach ($components as $name => $config) {
             self::app()->setComponent($name, $config);

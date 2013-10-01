@@ -40,7 +40,7 @@ class F_Web_Request {
 
         $this->_safeParams = F_Helper_Array::htmlspecialchars($this->_params);
 
-        if (isset(Flow::$cfg['unset_reqs']) && Flow::$cfg['unset_reqs']) {
+        if (isset(Flow::$cfg['safe_input']) && Flow::$cfg['safe_input']) {
             unset($_GET);
             unset($_POST);
             unset($_REQUEST);
@@ -97,6 +97,17 @@ class F_Web_Request {
             return $nullvalue;
         }
         return (float)$this->_params[$param];
+    }
+
+    /**
+     * 得到原始的串，会有XSS问题
+     *
+     */
+    public function getRaw($param, $nullvalue = null) {
+        if (!isset($this->_params[$param])) {
+            return $nullvalue;
+        }
+        return $this->_params[$param];
     }
 
     /**

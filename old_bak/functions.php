@@ -45,7 +45,7 @@ function M($modelName) {
     isset($m) ? $m : $m = array();
 
     if (!array_key_exists($modelName, $m)) {
-        $t = include_once(APP_BASE . "/model/" . $modelName . ".class.php");
+        $t = include_once(APP_BASE . "/models/" . $modelName . ".class.php");
 
         if (!$t) {
             throw new FlowException("模型" . $modelName . "载入失败, 没有文件 " . APP_BASE . "/module/" . $modelName . ".class.php");
