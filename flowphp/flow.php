@@ -163,9 +163,9 @@ class Flow {
      * 开发模式启用
      */
     public function initDevMode() {
-        $using_error_handler = isset(self::$cfg["enableErrorHandler"]) ? self::$cfg["enableErrorHandler"] : true;
+        $using_error_handler = isset(self::$cfg["enableErrorHandler"]) ? self::$cfg["enableErrorHandler"] : false;
         // 配置异常处理
-        if ($using_error_handler) {
+        if (DEV_MODE || $using_error_handler) {
             set_exception_handler("F_Core_ErrorHandler::exceptionHandler");
             set_error_handler("F_Core_ErrorHandler::errorHandler");
             register_shutdown_function("F_Core_ErrorHandler::fatalShutdownHandler");
