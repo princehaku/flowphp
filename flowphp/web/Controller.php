@@ -27,10 +27,10 @@ class F_Web_Controller {
     /**
      * @var F_View_SViewEngine
      */
-    public $viewEngine;
+    public $view;
 
-    public function setViewEngine($view_engine) {
-        $this->viewEngine = $view_engine;
+    public function setView($view_engine) {
+        $this->view = $view_engine;
     }
 
     public function display($view_name = null, $view_data = null) {
@@ -39,12 +39,12 @@ class F_Web_Controller {
             $view_name = str_replace("controller", "", $view_name);
         }
         // 调用模板引擎
-        $this->viewEngine->display($view_name, $view_data);
+        $this->view->display($view_name, $view_data);
     }
 
     public function assign($key, $value) {
         // 调用模版
-        return $this->viewEngine->assign($key, $value);
+        return $this->view->assign($key, $value);
     }
 
 }

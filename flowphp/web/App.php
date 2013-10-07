@@ -55,7 +55,7 @@ class F_Web_App extends F_Core_App {
 
         $action = Flow::app()->createComponent(array(
             'class' => $action_name,
-            'viewEngine' => array(
+            'view' => array(
                 'class' => 'F_View_SViewEngine'
             ),
             'request' => Flow::app()->getComponent('request')
