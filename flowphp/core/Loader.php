@@ -13,6 +13,8 @@
  */
 class F_Core_Loader {
 
+    public $coreClass = array();
+
     public function init() {
     }
 
@@ -38,7 +40,7 @@ class F_Core_Loader {
                 $lastp = $paths[(count($paths) - 1)];
                 unset($paths[count($paths) - 1]);
                 foreach ($paths as $i => $path_seg) {
-                    if ($i != 0 ) {
+                    if ($i != 0) {
                         $paths[$i] = strtolower($path_seg);
                     }
                 }
