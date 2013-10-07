@@ -31,6 +31,9 @@ class F_Core_Loader {
             $paths = explode("_", $class_name);
 
             if (isset($paths[0])) {
+                if ($paths[0] == "F") {
+                    $paths[0] = "system";
+                }
                 $paths[0] = Flow::getPathOfAlias($paths[0]);
                 $lastp = $paths[(count($paths) - 1)];
                 unset($paths[count($paths) - 1]);

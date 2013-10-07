@@ -181,11 +181,10 @@ class Flow {
             define("DEV_MODE", false);
         };
         // 定义路径检测
-        if (!defined("APP_PATH") || !defined("FLOW_PATH")) {
-            throw new Exception("No APP_PATH or FLOW_PATH Defined");
+        if (!defined("APP_PATH")) {
+            throw new Exception("No APP_PATH Defined");
         }
-        $this->setPathOfAlias('F', FLOW_PATH);
-        $this->setPathOfAlias('system', FLOW_PATH);
+        $this->setPathOfAlias('system', __DIR__);
         $this->setPathOfAlias('application', APP_PATH);
         Flow::import("system.core.Loader", true);
         // 初始化class_loader
