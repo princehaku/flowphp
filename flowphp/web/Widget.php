@@ -2,23 +2,19 @@
 /**
  * Copyright 2013 princehaku
  *
- *  Author     : baizhongwei
+ *  FileName   : Widget.php
+ *  Created on : 13-10-9 , 下午4:41
+ *  Author     : haku
  *  Blog       : http://3haku.net
  */
 
-/**
- * 榛樿鎺у埗鍣ㄧ被
- * F_Web_Controller
- */
-class F_Web_Controller {
+class F_Web_Widget {
 
     public function init() {
-
+        $this->setView(Flow::app()->view_engine);
+        $this->request = Flow::app()->request;
     }
 
-    public function beforeController() {
-
-    }
     /**
      * @var F_Web_Request
      */
@@ -38,12 +34,13 @@ class F_Web_Controller {
             $view_name = strtolower(get_called_class());
             $view_name = str_replace("controller", "", $view_name);
         }
-        // 璋冪敤妯℃澘寮曟搸
+        // 调用模板引擎
         $this->view->display($view_name, $view_data);
     }
 
     public function assign($key, $value) {
-        // 璋冪敤妯＄増
+        // 调用模版
         return $this->view->assign($key, $value);
     }
+
 }

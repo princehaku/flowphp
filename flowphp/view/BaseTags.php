@@ -106,7 +106,7 @@ class F_View_BaseTags {
         }
 
         // 替换<else/>
-        $source = preg_replace("/<else\\/>/", "<?php } else { ?>", $source);
+        $source = preg_replace("/<else.*?\\/>/", "<?php } else { ?>", $source);
         // 替换</if>
         $source = preg_replace("/<\\/if>/", "<?php } ?>", $source);
         return true;
