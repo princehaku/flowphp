@@ -21,6 +21,9 @@ class F_Web_App extends F_Core_App {
             ),
             "file_cache" => array(
                 "class" => "F_Cache_File"
+            ),
+            "view_engine" => array(
+                'class' => 'F_View_SViewEngine'
             )
         )
     );
@@ -55,9 +58,7 @@ class F_Web_App extends F_Core_App {
 
         $action = Flow::app()->createComponent(array(
             'class' => $action_name,
-            'view' => array(
-                'class' => 'F_View_SViewEngine'
-            ),
+            'view' => Flow::app()->view_engine,
             'request' => Flow::app()->getComponent('request')
         ));
         $action->beforeController();

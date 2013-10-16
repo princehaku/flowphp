@@ -13,7 +13,7 @@
     <link href="<?php echo Flow::$cfg['base_url']; ?>/asserts/css/bootstrap-ie6.min.css" rel="stylesheet"/>
     <![endif]-->
     <link href="<?php echo Flow::$cfg['base_url']; ?>/asserts/css/bootstrap-responsive.css" rel="stylesheet"/>
-    <link href="<?php echo Flow::$cfg['base_url']; ?>/asserts/css/bootswatch.css" rel="stylesheet"/>
+    <link href="<?php echo Flow::$cfg['base_url']; ?>/asserts/css/main.css" rel="stylesheet"/>
 </head>
 
 <body data-spy="scroll" data-target=".smartnav">
