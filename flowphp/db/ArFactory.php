@@ -3,14 +3,14 @@
  * Copyright 2013 princehaku
  *
  *  FileName   : ArFactory.php
- *  Created on : 13-9-29 , ÉÏÎç11:53
+ *  Created on : 13-9-29 , ä¸Šåˆ11:53
  *  Author     : haku
  *  Blog       : http://3haku.net
  */
 class F_DB_ArFactory extends F_DB_Basic {
 
     /**
-     * ³õÊ¼»¯ aclÒªÇó±ØĞëÖ¸¶¨±íÃû
+     * åˆå§‹åŒ– aclè¦æ±‚å¿…é¡»æŒ‡å®šè¡¨å
      *
      * @return F_DB_ArManager
      */

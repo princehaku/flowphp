@@ -155,18 +155,18 @@ class F_View_BaseTags {
         // 参数分离
         $parm = $matches[1];
         // list 的name
-        preg_match("/.*?from=\"(.*?)\"/", $parm, $tag);
+        preg_match("/.*?for=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list tags Must have property from and as");
+            throw new Exception("list tags Must have property for and val");
         }
         $tagname = $tag[1];
         // list 的key
         preg_match("/.*?key=\"(.*?)\"/", $parm, $tag);
         $tag_key = isset($tag[1]) ? $tag[1] : "";
         // list 的val
-        preg_match("/.*?as=\"(.*?)\"/", $parm, $tag);
+        preg_match("/.*?val=\"(.*?)\"/", $parm, $tag);
         if (empty($tag[1])) {
-            throw new Exception("list tags Must have property from and as");
+            throw new Exception("list tags Must have property for and val");
         }
         $tag_val = $tag[1];
         // 替换标签;
