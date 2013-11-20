@@ -12,10 +12,11 @@ return array(
     'base_url' => '/mysql_activerecord',
     "import" => array(
         "module.*",
+        "actions.*",
     ),
     "components" => array(
-        "acm" => array(
-            "class" => "F_DB_ArManager",
+        "acf" => array(
+            "class" => "F_DB_ArFactory",
             'connectionString' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8',
             'username' => '',
             'password' => '',

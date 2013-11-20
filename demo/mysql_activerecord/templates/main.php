@@ -10,7 +10,7 @@
     <div id="comic">
         漫画
         <ul class="thumbnails">
-            <list from="$comicnodes" val="$vo">
+            <list for="$comicnodes" val="$vo">
                 <li class="span3">
                     <div class="thumbnail">
                         <img src="{{$vo.main_pic}}"/>
@@ -28,7 +28,7 @@
     <div id="movie">
         电影
         <ul class="thumbnails">
-            <list from="$movienodes" val="$vo">
+            <list for="$movienodes" val="$vo">
                 <li class="span3">
                     <div class="thumbnail">
                         <img src="{{$vo.main_pic}}"/>
