@@ -110,6 +110,7 @@ class F_DB_ArManager {
             }
             // avoid sql inject
             $value = addslashes($value);
+
             if (empty($this->tableinfo[$key])) {
                 throw new Exception("ActiveRecord {$key} does not mapping to forms");
             }

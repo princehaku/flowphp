@@ -18,7 +18,7 @@ class F_DB_ArFactory extends F_DB_Basic {
         if (empty($this->acm[$tablename]) || $new_instance) {
             $arm = new F_DB_ArManager();
             $arm->dbh = $this->dbh;
-            $arm->tableinfo = $arm->setDBTable($this, $tablename);
+            $arm->setDBTable($this, $tablename);
             $this->acm[$tablename] = $arm;
         }
         return $this->acm[$tablename];
