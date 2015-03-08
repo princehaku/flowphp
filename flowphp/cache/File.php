@@ -14,13 +14,9 @@ class F_Cache_File implements ArrayAccess {
     private $_cachedValues = array();
 
     public function init() {
-        $appcache_dir = isset(Flow::$cfg["appcache_dir"]) ? Flow::$cfg["appcache_dir"] : APP_PATH . "/appcache/";
-        if (!file_exists($appcache_dir)) {
-            if (!mkdir($appcache_dir, 0777, 1)) {
-                throw new Exception("Cache Dir " . $appcache_dir . " Failed");
-            }
+        if (empty($this->baseDir)) {
+            throw new Exception("File Cache Dir Not Found");
         }
-        $this->baseDir = $appcache_dir;
     }
 
     public function put($key, $value, $expires = -1) {
