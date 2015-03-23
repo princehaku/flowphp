@@ -56,8 +56,14 @@ class F_Core_ErrorHandler {
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $obj) {
 
+
         restore_error_handler();
         restore_exception_handler();
+
+        // 处理@符号的情况
+        if (!(error_reporting() !== 0 && $errno)) {
+            return;
+        }
 
         switch ($errno) {
             case E_NOTICE :
