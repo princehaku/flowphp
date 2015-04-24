@@ -243,7 +243,7 @@ class Flow {
         // 打印日志
         $errors = FLow::Log()->getDatas();
         foreach ($errors as $message) {
-            error_log(implode(" ", $message));
+            error_log("FlowPHP" .  implode(" ", $message));
         }
         if (DEV_MODE) {
             if (PHP_SAPI == 'cli') {

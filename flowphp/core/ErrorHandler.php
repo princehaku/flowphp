@@ -24,6 +24,7 @@ class F_Core_ErrorHandler {
         restore_error_handler();
         restore_exception_handler();
 
+        error_log("FlowPHP" . sprintf("%s", $exception));
         echo "<pre>";
         echo nl2br($exception);
         echo "</pre>";
