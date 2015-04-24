@@ -241,6 +241,10 @@ class Flow {
      */
     public static function showLogs() {
         // 打印日志
+        $errors = FLow::Log()->getDatas();
+        foreach ($errors as $message) {
+            error_log(implode(" ", $message));
+        }
         if (DEV_MODE) {
             if (PHP_SAPI == 'cli') {
                 $errors = FLow::Log()->getDatas();
